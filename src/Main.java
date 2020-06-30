@@ -16,49 +16,21 @@ public class Main {
         field.setRandomLandscape();
         field.print();
 
-        /*x = Integer.parseInt(reader.readLine());
-        y = Integer.parseInt(reader.readLine());
-        Cell startCell = new Cell(x, y);
-
-        x = Integer.parseInt(reader.readLine());
-        y = Integer.parseInt(reader.readLine());
-        Cell finishCell = new Cell(x, y);*/
-
-        /*Cell cell1 = new Cell(22, 4);
-        Cell cell2 = new Cell(40, 0);
-        Cell cell3 = new Cell(7, 32);
-        ArrayList<Cell> cells = new ArrayList<>();
-        cells.add(cell1);
-        cells.add(cell2);
-        cells.add(cell3);*/
-
-        ArrayList<ArrayList<Cell>> allPaths = new ArrayList<>();
-        ArrayList<Cell> currentPath = new ArrayList<>();
-        currentPath.add(new Cell(0, 0));
-
-        ArrayList<Cell> aStarPath = field.findPath(new Cell(0, 0), new Cell(12, 12));
-        /*for (Cell el: aStarPath)
-            System.out.print(el.getX()+ " " + el.getY() + " --> ");
-
-        for (Cell el: aStarPath)
+        ArrayList<Cell> path = field.findPath(new Cell(0,0), new Cell(1,1));
+        for (Cell el: path)
             System.out.print(el.getX() + " " + el.getY() + " --> ");
-        System.out.println("");*/
+        System.out.println("\n------------------------------------------");
 
-        int minimalPath = 0;
-        for (int i=0; i<aStarPath.size()-1; i++)
-            minimalPath += field.fieldTiles[aStarPath.get(i).getY()][aStarPath.get(i).getX()].getTileType().getTime();
-        field.findAllPath(new Cell(12, 12), currentPath, allPaths, minimalPath, 0);
-
+        ArrayList<ArrayList<Cell>> allPaths = field.findAllPath(new Cell(0,0), new Cell(1, 1));
 
         for (ArrayList<Cell> mas: allPaths) {
             for (Cell el : mas) {
-                System.out.print(el.getX() + "  " + el.getY() + " --> ");
+                System.out.print(el.getX() + " " + el.getY() + " --> ");
             }
             System.out.println("");
         }
 
-
-        field.save();
+        //field.save();
         field = field.load();
         field.print();
 

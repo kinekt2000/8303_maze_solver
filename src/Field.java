@@ -288,16 +288,28 @@ public class Field implements Serializable{
         ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("save.dat"));
         Field field = (Field) inputStream.readObject();
 
-        Tile[][] fieldCell = new Tile[height][width];
-        for (int j=0; j<width; j++)
-            for (int i=0; i<height; i++)
+        Tile[][] fieldCell = new Tile[field.height][field.width];
+        for (int j=0; j<field.width; j++)
+            for (int i=0; i<field.height; i++)
                 fieldCell[j][i] = (Tile) inputStream.readObject();
         field.fieldTiles = fieldCell;
         inputStream.close();
         return field;
     }
 
-    public void  findAllPath(Cell finishCell, ArrayList<Cell> currentPath, ArrayList<ArrayList<Cell>> allPaths, int minimalPathLength, int currentPathLength){
+    public ArrayList<ArrayList<Cell>> findAllPath(Cell startCell, Cell finishCell){
+        ArrayList<ArrayList<Cell>> allPaths = new ArrayList<>();
+        ArrayList<Cell> currentPath = new ArrayList<>();
+        currentPath.add(startCell);
+        ArrayList<Cell> aStarPath = findPath(startCell, finishCell);
+        int minimalPath = 0;
+        for (int i=0; i<aStarPath.size()-1; i++)
+            minimalPath += fieldTiles[aStarPath.get(i).getY()][aStarPath.get(i).getX()].getTileType().getTime();
+        findAllPathRecursion(finishCell, currentPath, allPaths, minimalPath, 0);
+        return allPaths;
+    }
+
+    public void  findAllPathRecursion(Cell finishCell, ArrayList<Cell> currentPath, ArrayList<ArrayList<Cell>> allPaths, int minimalPathLength, int currentPathLength){
         Cell currentCell = currentPath.get(currentPath.size()-1);
         if (currentPathLength == minimalPathLength && currentCell.getX() == finishCell.getX() && currentCell.getY() == finishCell.getY()){
             allPaths.add(new ArrayList<>(currentPath));
@@ -306,7 +318,7 @@ public class Field implements Serializable{
             if (currentCell.getX()-1 >= 0 && (currentPath.size() == 1 || currentPath.get(currentPath.size()-2).getX() != currentCell.getX()-1)){
                 currentPath.add(new Cell(currentCell.getX()-1, currentCell.getY()));
                 currentPathLength += fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime();
-                findAllPath(finishCell, currentPath, allPaths, minimalPathLength, currentPathLength);
+                findAllPathRecursion(finishCell, currentPath, allPaths, minimalPathLength, currentPathLength);
                 currentPath.remove(currentPath.size()-1);
                 currentPathLength -= fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime();
             }
@@ -314,7 +326,7 @@ public class Field implements Serializable{
             if (currentCell.getX()+1 < width && (currentPath.size() == 1 || currentPath.get(currentPath.size()-2).getX() != currentCell.getX()+1)){
                 currentPath.add(new Cell(currentCell.getX()+1, currentCell.getY()));
                 currentPathLength += fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime();
-                findAllPath(finishCell, currentPath, allPaths, minimalPathLength, currentPathLength);
+                findAllPathRecursion(finishCell, currentPath, allPaths, minimalPathLength, currentPathLength);
                 currentPath.remove(currentPath.size()-1);
                 currentPathLength -= fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime();
             }
@@ -322,7 +334,7 @@ public class Field implements Serializable{
             if (currentCell.getY()-1 >= 0 && (currentPath.size() == 1 || currentPath.get(currentPath.size()-2).getY() != currentCell.getY()-1)){
                 currentPath.add(new Cell(currentCell.getX(), currentCell.getY()-1));
                 currentPathLength += fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime();
-                findAllPath(finishCell, currentPath, allPaths, minimalPathLength, currentPathLength);
+                findAllPathRecursion(finishCell, currentPath, allPaths, minimalPathLength, currentPathLength);
                 currentPath.remove(currentPath.size()-1);
                 currentPathLength -= fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime();
             }
@@ -330,7 +342,7 @@ public class Field implements Serializable{
             if (currentCell.getY()+1 < height && (currentPath.size() == 1 || currentPath.get(currentPath.size()-2).getY() != currentCell.getY()+1)){
                 currentPath.add(new Cell(currentCell.getX(), currentCell.getY()+1));
                 currentPathLength += fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime();
-                findAllPath(finishCell, currentPath, allPaths, minimalPathLength, currentPathLength);
+                findAllPathRecursion(finishCell, currentPath, allPaths, minimalPathLength, currentPathLength);
                 currentPath.remove(currentPath.size()-1);
                 currentPathLength -= fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime();
             }
