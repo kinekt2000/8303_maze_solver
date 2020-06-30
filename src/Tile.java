@@ -1,13 +1,19 @@
-public class Cell {
+import java.io.Serializable;
+
+public class Tile implements Serializable {
 
     private final int x;
     private final int y;
+    private  final TileType tileType;
     private int distanceFunction;
     private int distance;
+    public boolean isVisited;
 
-    public Cell(int x, int y){
+    public Tile(int x, int y, TileType tyleType){
         this.x = x;
         this.y = y;
+        this.tileType = tyleType;
+        this.isVisited = false;
     }
 
 
@@ -33,5 +39,9 @@ public class Cell {
 
     public void setDistance(int distance) {
         this.distance = distance;
+    }
+
+    public TileType getTileType() {
+        return tileType;
     }
 }

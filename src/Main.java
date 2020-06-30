@@ -32,32 +32,32 @@ public class Main {
         cells.add(cell2);
         cells.add(cell3);*/
 
-        ArrayList<ArrayList<Cell>> allPaths = new ArrayList<>();
-        ArrayList<Cell> currentPath = new ArrayList<>();
-        currentPath.add(new Cell(0, 0));
+        ArrayList<ArrayList<Tile>> allPaths = new ArrayList<>();
+        ArrayList<Tile> currentPath = new ArrayList<>();
+        currentPath.add(new Tile(0, 0, TileType.random()));
 
-        ArrayList<Cell> aStarPath = field.findPath(new Cell(0, 0), new Cell(3, 3));
-        for (Cell el: aStarPath)
+        ArrayList<Tile> aStarPath = field.findPath(new Tile(0, 0, TileType.random()), new Tile(3, 3, TileType.random()));
+        for (Tile el: aStarPath)
             System.out.print(el.getX() + " " + el.getY() + " --> ");
         System.out.println("");
 
         int minimalPath = 0;
         for (int i=0; i<aStarPath.size()-1; i++)
-            minimalPath += field.fieldCell[aStarPath.get(i).getY()][aStarPath.get(i).getX()].time;
-        field.findAllPath(new Cell(3, 3), currentPath, allPaths, minimalPath, 0);
+            minimalPath += field.fieldCell[aStarPath.get(i).getY()][aStarPath.get(i).getX()].getTileType().getTime();
+        field.findAllPath(new Tile(3, 3, TileType.random()), currentPath, allPaths, minimalPath, 0);
 
 
-        for (ArrayList<Cell> mas: allPaths) {
-            for (Cell el : mas) {
+        for (ArrayList<Tile> mas: allPaths) {
+            for (Tile el : mas) {
                 System.out.print(el.getX() + "  " + el.getY() + " --> ");
             }
             System.out.println("");
         }
 
 
-        //field.save();
-        //field = field.load();
-        //field.print();
+        field.save();
+        field = field.load();
+        field.print();
 
 
     }
