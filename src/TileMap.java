@@ -1,3 +1,4 @@
+import render.Drawable;
 import resources.TextureGettingException;
 import tiles.TileType;
 

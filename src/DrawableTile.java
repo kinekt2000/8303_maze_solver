@@ -1,3 +1,4 @@
+import render.Drawable;
 import tiles.Tile;
 import tiles.TileType;
 import resources.ResourceManager;

@@ -1,3 +1,5 @@
+import render.Drawable;
+
 import java.awt.*;
 
 public class TileHighlighter implements Drawable {

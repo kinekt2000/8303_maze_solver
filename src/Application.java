@@ -1,8 +1,9 @@
 import UI.UI;
 import UI.dialog.Dialog;
 import UI.dialog.DialogRaiser;
-import UI.ResizeDialog;
 
+import render.Canvas;
+import render.Drawable;
 import resources.ResourceManager;
 import tiles.TileType;
 
@@ -31,11 +32,13 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
 
     double time = System.currentTimeMillis();
 
-    Canvas canvas;
+    render.Canvas canvas;
     TileHighlighter highlighter;
 
     UI ui;
     Dialog dialog = null;
+
+    FileListener fileListener;
     LandscapeListener landscapeListener;
     ObjectsListener objectsListener;
 
@@ -55,6 +58,10 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
             @Override
             public void componentResized(ComponentEvent e) {
                 ui.setSize(getWidth(), getHeight());
+                if(dialog != null) {
+                    dialog.setPosition((getWidth() - dialog.getWidth())/2,
+                            (getHeight() - dialog.getHeight())/2);
+                }
             }
 
             @Override
@@ -96,8 +103,11 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
             System.exit(1);
         }
 
+        fileListener = new FileListener(this);
         landscapeListener = new LandscapeListener(this);
         objectsListener = new ObjectsListener();
+
+        ui.addListener("file_menu", fileListener);
         ui.addListener("landscape_menu", landscapeListener);
         ui.addListener("objects_menu", objectsListener);
 
@@ -300,11 +310,12 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
         JFrame window = new JFrame();
         Application field = new Application();
 
-        window.setSize(1024, 1024);
+        window.setSize(700, 700);
         window.setLocationRelativeTo(null);
 
         window.setTitle("Path finder");
-        window.setResizable(false);
+        window.setResizable(true);
+        window.setMinimumSize(new Dimension(700, 700));
 
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.add(field);

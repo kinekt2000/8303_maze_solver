@@ -33,12 +33,17 @@ public class UI{
 
         try {
             main = new MainPanel(width - MainPanel.width, 0,
+                    ImageIO.read(new File("assets/interface/file.png")),
                     ImageIO.read(new File("assets/interface/brush.png")),
                     ImageIO.read(new File("assets/interface/object.png")),
                     ImageIO.read(new File("assets/interface/gear.png")));
 
-            additional.put("landscape_menu", new LandscapePanel(0, height - LandscapePanel.height,
+            additional.put("file_menu", new FilePanel(0, height - FilePanel.height,
                     ImageIO.read(new File("assets/interface/resize.png")),
+                    ImageIO.read(new File("assets/interface/load.png")),
+                    ImageIO.read(new File("assets/interface/save.png"))));
+
+            additional.put("landscape_menu", new LandscapePanel(0, height - LandscapePanel.height,
                     ImageIO.read(new File("assets/interface/grass.png")),
                     ImageIO.read(new File("assets/interface/sand.png")),
                     ImageIO.read(new File("assets/interface/gravel.png")),
@@ -50,6 +55,7 @@ public class UI{
                     ImageIO.read(new File("assets/interface/scout.png"))));
 
             additional.put("algorithm_menu", new AlgorithmPanel(0, height - AlgorithmPanel.height));
+
         } catch (IOException e) {
             System.out.println(e.getMessage());
             throw new IOException("error during menu building", e);
@@ -111,7 +117,9 @@ public class UI{
                 ButtonPanel subMenu = additional.getOrDefault(subMenuID, null);
                 if(this.subMenu != null && this.subMenu != subMenu){
                     this.subMenu.drop();
-                    listeners.get(subMenuID).drop();
+                    try {
+                        listeners.get(this.subMenuID).drop();
+                    } catch (NullPointerException dummy) {}
                 }
                 this.subMenu = subMenu;
                 this.subMenuID = subMenuID;
@@ -125,14 +133,12 @@ public class UI{
                 String button = subMenu.press(x, y);
                 if(button == null) return;
 
-                System.out.println(subMenuID);
-
                 boolean pressed = subMenu.isButtonPressed(button);
                 try {
                     listeners.get(subMenuID).notify(button, pressed, e);
                 } catch (NullPointerException exception) {
-                    System.out.println("Desync between menu name and listener name");
-                    exception.printStackTrace();
+                    System.out.println("Can't find appropriate listener for \"" + subMenuID + "\"");
+//                    exception.printStackTrace();
                 }
 
                 if(!SwingUtilities.isLeftMouseButton(e)) {

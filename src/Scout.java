@@ -1,7 +1,9 @@
+import render.Drawable;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Scout implements Drawable{
+public class Scout implements Drawable {
 
     private int x;
     private int y;

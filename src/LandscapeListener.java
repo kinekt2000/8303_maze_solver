@@ -1,5 +1,3 @@
-import UI.ChangeTileTypeDialog;
-import UI.ResizeDialog;
 import UI.dialog.DialogRaiser;
 import tiles.TileType;
 
@@ -18,16 +16,10 @@ public class LandscapeListener implements UI.Listener{
     @Override
     public void notify(String function, boolean activate, MouseEvent e) {
 
-        if(!function.equals("resize")) {
-            if(SwingUtilities.isLeftMouseButton(e)){
-                brush = TileType.ID(function);
-            } else {
-                raiser.raiseDialog(new ChangeTileTypeDialog(function));
-            }
+        if(SwingUtilities.isLeftMouseButton(e)){
+            brush = TileType.ID(function);
         } else {
-            if(SwingUtilities.isLeftMouseButton(e)) {
-                raiser.raiseDialog(new ResizeDialog());
-            }
+            raiser.raiseDialog(new ChangeTileTypeDialog(function));
         }
     }
 

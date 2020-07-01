@@ -3,7 +3,7 @@ package UI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-class Button {
+public class Button {
     final String id;
 
     private int x;
@@ -17,7 +17,7 @@ class Button {
 
     boolean pressed;
 
-    Button(String id, BufferedImage texture, int x, int y, double r) {
+    public Button(String id, BufferedImage texture, int x, int y, double r) {
         if(id == null) {
             throw new NullPointerException("null pointer button id casted");
         }
@@ -29,7 +29,7 @@ class Button {
         this.r = r;
     }
 
-    Button(String id, BufferedImage texture, int x, int y) {
+    public Button(String id, BufferedImage texture, int x, int y) {
         if(texture == null){
             throw new NullPointerException("null pointer button texture casted");
         }
@@ -45,7 +45,7 @@ class Button {
         this.r = Math.min(texture.getWidth(), texture.getHeight())/2.;
     }
 
-    Button(String id, int x, int y, double r) {
+    public Button(String id, int x, int y, double r) {
         if(id == null) {
             throw new NullPointerException("null pointer button id casted");
         }
@@ -57,12 +57,12 @@ class Button {
         this.texture = null;
     }
 
-    void move(int x, int y) {
+    public void move(int x, int y) {
         this.x += x;
         this.y += y;
     }
 
-    void update(int time) {
+    public void update(int time) {
         timer -= time;
         if(timer < 0) {
             timer = 0;
@@ -73,24 +73,24 @@ class Button {
         }
     }
 
-    void press() {
+    public void press() {
         pressed = true;
         autoRelease = false;
     }
 
-    void press(int time) {
+    public void press(int time) {
         pressed = true;
         timer = time;
         autoRelease = true;
     }
 
-    void release() {
+    public void release() {
         if(!autoRelease) {
             pressed = false;
         }
     }
 
-    boolean isPointIn(int x, int y) {
+    public boolean isPointIn(int x, int y) {
         if((x - this.x)*(x - this.x) + (y - this.y)*(y - this.y) <= r*r) {
             return true;
         } else {
@@ -98,15 +98,15 @@ class Button {
         }
     }
 
-    boolean isPressed() {
+    public boolean isPressed() {
         return pressed;
     }
 
-    String getID() {
+    public String getID() {
         return id;
     }
 
-    void draw(Graphics g) {
+    public void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
         // save context
