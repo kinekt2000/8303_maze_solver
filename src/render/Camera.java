@@ -1,3 +1,5 @@
+package render;
+
 import java.awt.geom.AffineTransform;
 
 public class Camera {

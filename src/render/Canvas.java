@@ -1,3 +1,5 @@
+package render;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 
