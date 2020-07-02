@@ -21,6 +21,10 @@ public class FileListener implements UI.Listener{
         if(function.equals("load")) {
             raiser.raiseDialog(new OpenFileDialog());
         }
+
+        if(function.equals("save")) {
+            raiser.raiseDialog(new SaveFileDialog());
+        }
     }
 
     @Override

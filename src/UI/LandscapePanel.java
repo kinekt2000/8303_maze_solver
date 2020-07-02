@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 class LandscapePanel extends ButtonPanel {
 
-    final static public int width = 480;
+    final static public int width = 400;
     final static public int height = 80;
 
     LandscapePanel(int x, int y,

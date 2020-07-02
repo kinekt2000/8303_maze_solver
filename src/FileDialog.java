@@ -1,4 +1,5 @@
 import UI.dialog.Dialog;
+import UI.dialog.DialogException;
 import UI.Line;
 
 import javax.imageio.ImageIO;
@@ -10,6 +11,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 abstract class FileDialog implements Dialog {
@@ -119,14 +121,14 @@ abstract class FileDialog implements Dialog {
     private int x;
     private int y;
 
-    UI.Button accept;
-    UI.Button cancel;
+    protected UI.Button accept;
+    protected UI.Button cancel;
 
-    Triangle up;
-    Triangle down;
+    protected Triangle up;
+    protected Triangle down;
 
-    List<Line> files;
-    Line chosen;
+    protected List<Line> files;
+    protected Line chosen;
     private int lineOffset = 0;
 
     boolean close = false;
@@ -143,8 +145,10 @@ abstract class FileDialog implements Dialog {
                 int dotIndex = name.lastIndexOf('.');
                 if(dotIndex > 0) {
                     String extension = name.substring(dotIndex);
-                    if(extension.equals(".pfsv"))
-                        return true;
+                    if(extension.equals(".pfsv")) {
+                        if(name.length() - 5 <= 10)
+                            return true;
+                    }
                 }
                 return false;
             }
@@ -152,7 +156,6 @@ abstract class FileDialog implements Dialog {
 
         // save files searching and building lines list
         try {
-            int i = 0;
             File savesFolder = new File("saves");
 
             boolean fileExists = savesFolder.exists();
@@ -173,14 +176,20 @@ abstract class FileDialog implements Dialog {
                 }
             }
 
-            for (File file : savesFolder.listFiles(extensionFilter)) {
+            int i = 0;
+            File [] saves = savesFolder.listFiles(extensionFilter);
+            Arrays.sort(saves);
+            for (File file : saves) {
                 Line fileLine = new Line(LINES_FIELD_X + LINE_PADDING,
                         LINES_FIELD_Y + LINE_PADDING + i * (LINE_HEIGHT + LINE_PADDING),
                         LINES_FIELD_WIDTH - LINE_PADDING * 2,
                         LINE_HEIGHT);
 
-                fileLine.setLine(file.getName());
+                String fileName = file.getName();
+                fileName = fileName.substring(0, fileName.length()-5);
+                fileLine.setLine(fileName);
                 files.add(fileLine);
+                i++;
             }
         } catch (SecurityException exception) {
             // weird.
@@ -296,6 +305,26 @@ abstract class FileDialog implements Dialog {
             return;
         }
 
+        if(up.isPointIn(x, y)) {
+            if(lineOffset > 0) {
+                lineOffset--;
+                for(Line line: files) {
+                    line.move(0, +(LINE_PADDING + LINE_HEIGHT));
+                }
+            }
+            return;
+        }
+
+        if(down.isPointIn(x, y)) {
+            if(lineOffset < files.size() - VISIBLE_LINES) {
+                lineOffset++;
+                for(Line line: files) {
+                    line.move(0, -(LINE_PADDING + LINE_HEIGHT));
+                }
+            }
+            return;
+        }
+
         Line clicked = null;
 
         int subListEnd = (lineOffset + VISIBLE_LINES > files.size()) ? files.size() : lineOffset + VISIBLE_LINES;
@@ -304,6 +333,7 @@ abstract class FileDialog implements Dialog {
                 line.setBackColor(Color.LIGHT_GRAY);
                 clicked = line;
                 chosen.setLine(clicked.getLine());
+                chosen.setBackColor(Color.WHITE);
                 break;
             }
         }

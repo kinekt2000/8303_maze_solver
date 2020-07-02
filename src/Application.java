@@ -12,6 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
 
     double time = System.currentTimeMillis();
 
+    BufferedImage background;
     render.Canvas canvas;
     TileHighlighter highlighter;
 
@@ -62,6 +64,15 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
                     dialog.setPosition((getWidth() - dialog.getWidth())/2,
                             (getHeight() - dialog.getHeight())/2);
                 }
+
+                background = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+                Graphics2D g2d = (Graphics2D) background.getGraphics();
+                RadialGradientPaint gradient= new RadialGradientPaint(background.getWidth()/2, background.getHeight()/2,
+                        Math.max(background.getWidth()/2, background.getHeight()/2),
+                        new float[] {0.0f, 1f}, new Color[]{Color.DARK_GRAY, Color.LIGHT_GRAY});
+                g2d.setPaint(gradient);
+                g2d.fillRect(0, 0, background.getWidth(), background.getHeight());
+                g2d.dispose();
             }
 
             @Override
@@ -93,6 +104,13 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
         });
 
         canvas = new Canvas();
+        background = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = (Graphics2D) background.getGraphics();
+        RadialGradientPaint gradient= new RadialGradientPaint(background.getWidth()/2, background.getHeight()/2,1,
+                new float[] {0.0f, 0.5f}, new Color[]{Color.DARK_GRAY, Color.WHITE});
+        g2d.setPaint(gradient);
+        g2d.fillRect(0, 0, background.getWidth(), background.getHeight());
+        g2d.dispose();
 
         map = new TileMap(10, 10);
 
@@ -120,8 +138,9 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
 
     public void paint(Graphics g){
         super.paint(g);
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, getSize().width, getSize().height);
+//        g.setColor(Color.BLACK);
+//        g.fillRect(0, 0, getSize().width, getSize().height);
+        g.drawImage(background, 0, 0, null);
 
         // compile a list of objects
         List<Drawable> objectsToDraw = new ArrayList<>(map.getRenderObjects());
