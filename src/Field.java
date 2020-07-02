@@ -3,15 +3,25 @@ import java.util.*;
 
 public class Field implements Serializable{
 
-    transient Tile[][] fieldTiles;
-    private final int width;
-    private final int height;
+    transient Tile[][] fieldTiles;  //Карта клеток
+    private final int width;    //Ширина
+    private final int height;   //Высота
+    private boolean algIsWork;
+    private boolean isAlgManyTargetIsWork;
+    private ArrayList<Cell> notVisitedCells;
+    private ArrayList<Cell> path;
+    ArrayList<Cell> fullPath;
+    private HashMap<Cell, Cell> pathMap;
+    private Cell currentCell;
+    private int[][] minimalPathMap;
 
 
     public Field(int width, int height){
         this.width = width;
         this.height = height;
         fieldTiles = new Tile[height][width];
+        algIsWork = false;
+        isAlgManyTargetIsWork = false;
     }
 
     private Cell isContained(ArrayList<Cell> list, int x, int y){
@@ -40,25 +50,78 @@ public class Field implements Serializable{
         }
     }
 
-    public ArrayList<Cell> findPath(Cell startCell, Cell finishCell){
-        for (int j=0; j<height; j++)
-            for (int i=0; i<width; i++)
-                fieldTiles[j][i].isVisited = false;
+    public void printStatusCell(){
+        for (int j = 0; j<height; j++){
+            for (int i = 0; i<width; i++){
+                if (fieldTiles[j][i].isOpen)
+                    System.out.print("1 ");
+                else
+                    System.out.print("0 ");
+            }
+            System.out.println("\n");
+        }
+        System.out.println("");
 
-        ArrayList<Cell> notVisitedCells = new ArrayList<>();
-        HashMap<Cell, Cell> pathMap = new HashMap<>();
-        startCell.setDistance(0);
-        startCell.setDistanceFunction(Math.abs(startCell.getX() - finishCell.getX())+ Math.abs(startCell.getY()-finishCell.getY()));
-        notVisitedCells.add(startCell);
-        Cell currentCell = startCell;
+        for (int j = 0; j<height; j++){
+            for (int i = 0; i<width; i++){
+                if (fieldTiles[j][i].isVisited)
+                    System.out.print("1 ");
+                else
+                    System.out.print("0 ");
+            }
+            System.out.println("\n");
+        }
+
+
+    }
+
+    public ArrayList<Cell> getPath(){
+        return path;
+    }
+
+    public ArrayList<Cell> getFullPath(){
+        return fullPath;
+    }
+
+    public boolean nextStepFindPath(Cell startCell, Cell finishCell){
+        if (!algIsWork) {
+            for (int j = 0; j < height; j++)
+                for (int i = 0; i < width; i++) {
+                    fieldTiles[j][i].isVisited = false;   //Объявляем все клетки непосещенными
+                    fieldTiles[j][i].isOpen = false;
+                }
+
+            notVisitedCells = new ArrayList<>(); //Список непосещенных клеток
+            pathMap = new HashMap<>();      //Словарь обратного пути
+            startCell.setDistance(0);
+            startCell.setDistanceFunction(Math.abs(startCell.getX() - finishCell.getX()) + Math.abs(startCell.getY() - finishCell.getY()));
+            notVisitedCells.add(startCell);  //Добавляем начальную клетку в непосещенные
+            currentCell = startCell;
+        }
+
+        algIsWork = stepFindPath(finishCell);
+        if (!algIsWork){
+            path = new ArrayList<>();
+            path.add(currentCell);
+            while (currentCell.getX() != startCell.getX() || currentCell.getY() != startCell.getX()){
+                currentCell = pathMap.get(currentCell);
+                path.add(currentCell);
+            }
+            Collections.reverse(path);
+        }
+        return algIsWork;
+    }
+
+    public boolean stepFindPath(Cell finishCell){ //Поиск кратчайшего пути от одной клетки к другой
+        if (currentCell.getX() == finishCell.getX() && currentCell.getY() == finishCell.getY())
+            return false;
+
+        currentCell = Collections.min(notVisitedCells, (c1, c2) -> (int) (c1.getDistanceFunction() - c2.getDistanceFunction()));
+        fieldTiles[currentCell.getY()][currentCell.getX()].isVisited = true;
+        notVisitedCells.remove(currentCell);
         Cell neighborCell;
-
-        while (currentCell.getX() != finishCell.getX() || currentCell.getY() != finishCell.getY()){
-            currentCell = Collections.min(notVisitedCells, (c1, c2) -> (int) (c1.getDistanceFunction() - c2.getDistanceFunction()));
-            fieldTiles[currentCell.getY()][currentCell.getX()].isVisited = true;
-            notVisitedCells.remove(currentCell);
-
-            if (currentCell.getX()-1 >= 0 && !fieldTiles[currentCell.getY()][currentCell.getX()-1].isVisited){
+        if (currentCell.getX()-1 >= 0 && !fieldTiles[currentCell.getY()][currentCell.getX()-1].isVisited){
+                fieldTiles[currentCell.getY()][currentCell.getX()-1].isOpen = true;
                 neighborCell = isContained(notVisitedCells, currentCell.getX()-1, currentCell.getY());
                 if (neighborCell != null){
                     if (neighborCell.getDistance() > currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime()){
@@ -78,7 +141,7 @@ public class Field implements Serializable{
 
             if (currentCell.getX()+1 < width && !fieldTiles[currentCell.getY()][currentCell.getX()+1].isVisited){
                 neighborCell = isContained(notVisitedCells, currentCell.getX()+1, currentCell.getY());
-
+                fieldTiles[currentCell.getY()][currentCell.getX()+1].isOpen = true;
                 if (neighborCell != null){
                     if (neighborCell.getDistance() > currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime()){
                         neighborCell.setDistance(currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime());
@@ -97,6 +160,7 @@ public class Field implements Serializable{
 
             if (currentCell.getY()-1 >= 0 && !fieldTiles[currentCell.getY()-1][currentCell.getX()].isVisited){
                 neighborCell = isContained(notVisitedCells, currentCell.getX(), currentCell.getY()-1);
+                fieldTiles[currentCell.getY()-1][currentCell.getX()].isOpen = true;
                 if (neighborCell != null){
                     if (neighborCell.getDistance() > currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime()){
                         neighborCell.setDistance(currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime());
@@ -115,6 +179,7 @@ public class Field implements Serializable{
 
             if (currentCell.getY()+1 < height && !fieldTiles[currentCell.getY()+1][currentCell.getX()].isVisited){
                 neighborCell = isContained(notVisitedCells, currentCell.getX(), currentCell.getY()+1);
+                fieldTiles[currentCell.getY()+1][currentCell.getX()].isOpen = true;
                 if (neighborCell != null){
                     if (neighborCell.getDistance() > currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime()){
                         neighborCell.setDistance(currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime());
@@ -130,60 +195,83 @@ public class Field implements Serializable{
                     pathMap.put(neighborCell, currentCell);
                 }
             }
-        }
 
-        ArrayList<Cell> answerPath = new ArrayList<>();
-        answerPath.add(currentCell);
-        while (currentCell != startCell){
-            currentCell = pathMap.get(currentCell);
-            answerPath.add(currentCell);
-        }
-
-        Collections.reverse(answerPath);
-        return answerPath;
+            return true;
 
     }
 
-    private ArrayList<Cell> findDijkstraPath(Cell startCell, ArrayList<Cell> finishCells){
-        for (int j=0; j<height; j++)
-            for (int i=0; i<width; i++)
-                fieldTiles[j][i].isVisited = false;
+    private boolean nextStepFindDijkstraPath(Cell startCell, ArrayList<Cell> finishCells) {
+        if (!algIsWork) {
+            for (int j = 0; j < height; j++)
+                for (int i = 0; i < width; i++) {
+                    fieldTiles[j][i].isVisited = false;   //Объявляем все клетки непосещенными
+                    fieldTiles[j][i].isOpen = false;
+                }
 
-        ArrayList<Cell> notVisitedCells = new ArrayList<>();
-        HashMap<Cell, Cell> pathMap = new HashMap<>();
-        int[][] minimalPathMap = new int[height][width];
+            notVisitedCells = new ArrayList<>();
+            pathMap = new HashMap<>();
+            minimalPathMap = new int[height][width];
 
 
-        startCell.setDistance(0);
-        notVisitedCells.add(startCell);
-        Cell currentCell = startCell;
+            startCell.setDistance(0);
+            notVisitedCells.add(startCell);
+            currentCell = startCell;
+        }
+
+        algIsWork = stepFindDijkstraPath(finishCells);
+        if (!algIsWork){
+            Cell nearCell = Collections.min(finishCells, (c1, c2)->(int)(minimalPathMap[c1.getY()][c1.getX()]-minimalPathMap[c2.getY()][c2.getX()]));
+
+            for (Map.Entry<Cell, Cell> pair : pathMap.entrySet()){
+                if (pair.getKey().getX() == nearCell.getX() && pair.getKey().getY() == nearCell.getY()){
+                    currentCell = pair.getKey();
+                    break;
+                }
+
+            }
+
+            path = new ArrayList<>();
+            path.add(currentCell);
+            while (currentCell != startCell){
+                currentCell = pathMap.get(currentCell);
+                path.add(currentCell);
+            }
+
+            Collections.reverse(path);
+        }
+        return algIsWork;
+    }
+
+    private boolean stepFindDijkstraPath(ArrayList<Cell> finishCells){
+
+        if (notVisitedCells.isEmpty())
+            return false;
+
+        currentCell = Collections.min(notVisitedCells, (c1, c2) -> (int) (c1.getDistance() - c2.getDistance()));
+        fieldTiles[currentCell.getY()][currentCell.getX()].isVisited = true;
+        notVisitedCells.remove(currentCell);
+        minimalPathMap[currentCell.getY()][currentCell.getX()] = currentCell.getDistance();
         Cell neighborCell;
-
-        while (!notVisitedCells.isEmpty()){
-            currentCell = Collections.min(notVisitedCells, (c1, c2) -> (int) (c1.getDistance() - c2.getDistance()));
-            fieldTiles[currentCell.getY()][currentCell.getX()].isVisited = true;
-            notVisitedCells.remove(currentCell);
-            minimalPathMap[currentCell.getY()][currentCell.getX()] = currentCell.getDistance();
-
-            if (currentCell.getX()-1 >= 0 && !fieldTiles[currentCell.getY()][currentCell.getX()-1].isVisited){
-                neighborCell = isContained(notVisitedCells, currentCell.getX()-1, currentCell.getY());
-                if (neighborCell != null){
-                    if (neighborCell.getDistance() > currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime()){
-                        neighborCell.setDistance(currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime());
-                        pathMap.put(neighborCell, currentCell);
-                    }
-                }
-                else {
-                    neighborCell = new Cell(currentCell.getX()-1, currentCell.getY());
+        if (currentCell.getX()-1 >= 0 && !fieldTiles[currentCell.getY()][currentCell.getX()-1].isVisited){
+            fieldTiles[currentCell.getY()][currentCell.getX()-1].isOpen = true;
+            neighborCell = isContained(notVisitedCells, currentCell.getX()-1, currentCell.getY());
+            if (neighborCell != null){
+                if (neighborCell.getDistance() > currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime()){
                     neighborCell.setDistance(currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime());
-                    notVisitedCells.add(neighborCell);
                     pathMap.put(neighborCell, currentCell);
                 }
             }
+            else {
+                neighborCell = new Cell(currentCell.getX()-1, currentCell.getY());
+                neighborCell.setDistance(currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime());
+                notVisitedCells.add(neighborCell);
+                pathMap.put(neighborCell, currentCell);
+            }
+        }
 
-            if (currentCell.getX()+1 < width && !fieldTiles[currentCell.getY()][currentCell.getX()+1].isVisited){
-                neighborCell = isContained(notVisitedCells, currentCell.getX()+1, currentCell.getY());
-
+        if (currentCell.getX()+1 < width && !fieldTiles[currentCell.getY()][currentCell.getX()+1].isVisited){
+            neighborCell = isContained(notVisitedCells, currentCell.getX()+1, currentCell.getY());
+            fieldTiles[currentCell.getY()][currentCell.getX()+1].isOpen = true;
                 if (neighborCell != null){
                     if (neighborCell.getDistance() > currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime()){
                         neighborCell.setDistance(currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime());
@@ -196,70 +284,61 @@ public class Field implements Serializable{
                     notVisitedCells.add(neighborCell);
                     pathMap.put(neighborCell, currentCell);
                 }
-            }
+        }
 
-            if (currentCell.getY()-1 >= 0 && !fieldTiles[currentCell.getY()-1][currentCell.getX()].isVisited){
-                neighborCell = isContained(notVisitedCells, currentCell.getX(), currentCell.getY()-1);
-                if (neighborCell != null){
-                    if (neighborCell.getDistance() > currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime()){
-                        neighborCell.setDistance(currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime());
-                        pathMap.put(neighborCell, currentCell);
-                    }
-                }
-                else {
-                    neighborCell = new Cell(currentCell.getX(), currentCell.getY()-1);
+        if (currentCell.getY()-1 >= 0 && !fieldTiles[currentCell.getY()-1][currentCell.getX()].isVisited){
+            neighborCell = isContained(notVisitedCells, currentCell.getX(), currentCell.getY()-1);
+            fieldTiles[currentCell.getY()-1][currentCell.getX()].isOpen = true;
+            if (neighborCell != null){
+                if (neighborCell.getDistance() > currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime()){
                     neighborCell.setDistance(currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime());
-                    notVisitedCells.add(neighborCell);
                     pathMap.put(neighborCell, currentCell);
                 }
             }
+            else {
+                neighborCell = new Cell(currentCell.getX(), currentCell.getY()-1);
+                neighborCell.setDistance(currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime());
+                notVisitedCells.add(neighborCell);
+                pathMap.put(neighborCell, currentCell);
+            }
+        }
 
-            if (currentCell.getY()+1 < height && !fieldTiles[currentCell.getY()+1][currentCell.getX()].isVisited){
-                neighborCell = isContained(notVisitedCells, currentCell.getX(), currentCell.getY()+1);
-                if (neighborCell != null){
-                    if (neighborCell.getDistance() > currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime()){
-                        neighborCell.setDistance(currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime());
-                        pathMap.put(neighborCell, currentCell);
-                    }
-                }
-                else {
-                    neighborCell = new Cell(currentCell.getX(), currentCell.getY()+1);
+        if (currentCell.getY()+1 < height && !fieldTiles[currentCell.getY()+1][currentCell.getX()].isVisited){
+            neighborCell = isContained(notVisitedCells, currentCell.getX(), currentCell.getY()+1);
+            fieldTiles[currentCell.getY()+1][currentCell.getX()].isOpen = true;
+            if (neighborCell != null){
+                if (neighborCell.getDistance() > currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime()){
                     neighborCell.setDistance(currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime());
-                    notVisitedCells.add(neighborCell);
                     pathMap.put(neighborCell, currentCell);
                 }
             }
-        }
-
-        Cell nearCell = Collections.min(finishCells, (c1, c2)->(int)(minimalPathMap[c1.getY()][c1.getX()]-minimalPathMap[c2.getY()][c2.getX()]));
-
-
-        for (Map.Entry<Cell, Cell> pair : pathMap.entrySet()){
-            if (pair.getKey().getX() == nearCell.getX() && pair.getKey().getY() == nearCell.getY()){
-                currentCell = pair.getKey();
-                break;
+            else {
+                neighborCell = new Cell(currentCell.getX(), currentCell.getY()+1);
+                neighborCell.setDistance(currentCell.getDistance() + fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime());
+                notVisitedCells.add(neighborCell);
+                pathMap.put(neighborCell, currentCell);
             }
-
         }
 
-        ArrayList<Cell> answerPath = new ArrayList<>();
-        answerPath.add(currentCell);
-        while (currentCell != startCell){
-            currentCell = pathMap.get(currentCell);
-            answerPath.add(currentCell);
-        }
-
-        Collections.reverse(answerPath);
-        return answerPath;
+        return true;
 
     }
 
-    public ArrayList<Cell> findPath(Cell startCell, ArrayList<Cell> finishCells){
-        ArrayList<Cell> fullPath = new ArrayList<>();
-        ArrayList<Cell> complementaryPath;
-        fullPath.add(startCell);
-        while (!finishCells.isEmpty()) {
-            complementaryPath = findDijkstraPath(fullPath.get(fullPath.size() - 1), finishCells);
+    public boolean nextStepFindPath(Cell startCell, ArrayList<Cell> finishCells){
+        if (!isAlgManyTargetIsWork) {
+            fullPath = new ArrayList<>();
+            fullPath.add(startCell);
+            isAlgManyTargetIsWork = true;
+        }
+
+        if (finishCells.isEmpty()) {
+            isAlgManyTargetIsWork = false;
+            return false;
+        }
+
+        if (!nextStepFindDijkstraPath(fullPath.get(fullPath.size() - 1), finishCells)) {
+
+            ArrayList<Cell> complementaryPath = getPath();
             complementaryPath.remove(0);
             fullPath.addAll(complementaryPath);
             for (Cell el: finishCells){
@@ -270,8 +349,11 @@ public class Field implements Serializable{
 
             }
         }
-        return fullPath;
+
+        return true;
     }
+
+
 
     public void save() throws IOException {
         ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("save.dat"));
@@ -301,7 +383,10 @@ public class Field implements Serializable{
         ArrayList<ArrayList<Cell>> allPaths = new ArrayList<>();
         ArrayList<Cell> currentPath = new ArrayList<>();
         currentPath.add(startCell);
-        ArrayList<Cell> aStarPath = findPath(startCell, finishCell);
+        while(nextStepFindPath(startCell, finishCell)){
+
+        }
+        ArrayList<Cell> aStarPath = getPath();
         int minimalPath = 0;
         for (int i=0; i<aStarPath.size()-1; i++)
             minimalPath += fieldTiles[aStarPath.get(i).getY()][aStarPath.get(i).getX()].getTileType().getTime();

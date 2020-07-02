@@ -16,12 +16,32 @@ public class Main {
         field.setRandomLandscape();
         field.print();
 
-        ArrayList<Cell> path = field.findPath(new Cell(0,0), new Cell(1,1));
+        while(field.nextStepFindPath(new Cell(0,0), new Cell(4,4))){
+
+        }
+
+        ArrayList<Cell> path = field.getPath();
         for (Cell el: path)
             System.out.print(el.getX() + " " + el.getY() + " --> ");
-        System.out.println("\n------------------------------------------");
 
-        ArrayList<ArrayList<Cell>> allPaths = field.findAllPath(new Cell(0,0), new Cell(1, 1));
+        System.out.println();
+
+        ArrayList<Cell> cells = new ArrayList<>();
+        cells.add(new Cell(4, 0));
+        cells.add(new Cell(0, 4));
+        cells.add(new Cell(4, 4));
+
+        while (field.nextStepFindPath(new Cell(0, 0), cells)){
+
+        }
+
+        path = field.getFullPath();
+        for (Cell el: path)
+            System.out.print(el.getX() + " " + el.getY() + " --> ");
+
+        System.out.println();
+
+        ArrayList<ArrayList<Cell>> allPaths = field.findAllPath(new Cell(0,0), new Cell(4, 4));
 
         for (ArrayList<Cell> mas: allPaths) {
             for (Cell el : mas) {
@@ -31,8 +51,8 @@ public class Main {
         }
 
         //field.save();
-        field = field.load();
-        field.print();
+        //field = field.load();
+        //field.print();
 
 
     }
