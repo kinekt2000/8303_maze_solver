@@ -1,11 +1,10 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.management.BufferPoolMXBean;
 import java.util.ArrayList;
 
 public class Main {
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, CloneNotSupportedException {
 
         int x, y;
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -16,43 +15,58 @@ public class Main {
         field.setRandomLandscape();
         field.print();
 
-        while(field.nextStepFindPath(new Cell(0,0), new Cell(4,4))){
+        Cell startCell = new Cell(0,0);
+        //Cell finishCell = new Cell(3,3);
+        ArrayList<Cell> finishCells = new ArrayList<>();
+        finishCells.add(new Cell(4, 0));
+        finishCells.add(new Cell(4, 4));
+        finishCells.add(new Cell(0, 4));
 
+        field.setStartCell(startCell);
+        field.setFinishCells(finishCells);
+
+        for (int i=0; i<35; i++){
+            field.nextStep();
+            field.printStatusCell();
         }
 
-        ArrayList<Cell> path = field.getPath();
-        for (Cell el: path)
-            System.out.print(el.getX() + " " + el.getY() + " --> ");
+        field.clear();
+        field.printStatusCell();
 
-        System.out.println();
-
-        ArrayList<Cell> cells = new ArrayList<>();
-        cells.add(new Cell(4, 0));
-        cells.add(new Cell(0, 4));
-        cells.add(new Cell(4, 4));
-
-        while (field.nextStepFindPath(new Cell(0, 0), cells)){
-
+        field.setStartCell(startCell);
+        field.setFinishCells(finishCells);
+        while (field.nextStep()){
+            field.printStatusCell();
         }
 
-        path = field.getFullPath();
-        for (Cell el: path)
+        ArrayList<Cell> path = field.getFullPath();
+        for (Cell el: path){
             System.out.print(el.getX() + " " + el.getY() + " --> ");
-
+        }
         System.out.println();
 
-        ArrayList<ArrayList<Cell>> allPaths = field.findAllPath(new Cell(0,0), new Cell(4, 4));
+        field.setStartCell(startCell);
+        field.setFinishCell(new Cell(4,4));
+        field.run();
+        path = field.getPath();
 
-        for (ArrayList<Cell> mas: allPaths) {
-            for (Cell el : mas) {
+        for (Cell el: path){
+            System.out.print(el.getX() + " " + el.getY() + " --> ");
+        }
+        System.out.println();
+
+        ArrayList<ArrayList<Cell>> allPath = field.findAllPath();
+        for (ArrayList<Cell> mas: allPath){
+            for (Cell el: mas){
                 System.out.print(el.getX() + " " + el.getY() + " --> ");
             }
-            System.out.println("");
+            System.out.println();
         }
 
-        //field.save();
-        //field = field.load();
-        //field.print();
+        field.save("file.dat");
+        field = field.load("file.dat");
+        field.print();
+
 
 
     }

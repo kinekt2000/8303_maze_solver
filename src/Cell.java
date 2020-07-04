@@ -1,8 +1,8 @@
-public class Cell {
+public class Cell {     //Класс клетки, необходимой для работы алгоритма
     private final int x;
     private final int y;
-    private int distanceFunction;
-    private int distance;
+    private int distanceFunction;   //Значение эвристической функции для клетки
+    private int distance;           //Расстояние до текущей клетки
 
     public Cell(int x, int y) {
         this.x = x;

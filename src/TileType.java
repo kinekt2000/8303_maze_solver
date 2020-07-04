@@ -1,6 +1,6 @@
 import java.util.Random;
 
-public enum TileType {
+public enum TileType {      //Ландшафт плитки
     Grass("grass", 1),
     Sand("sand", 2),
     Gravel("gravel", 3),
@@ -10,8 +10,8 @@ public enum TileType {
     final static private TileType [] VALUES = TileType.values();
     final static private Random randomizer =  new Random();
 
-    private final String name;
-    private int time;
+    private final String name;    //Имя ландшафта
+    private int time;             //Время его прохождения
 
     TileType(String name, int time) {
         this.name = name;
@@ -36,8 +36,8 @@ public enum TileType {
     }
 
     static public TileType ID(String name) {
-        for(TileType type: VALUES) {
-            if(type.name.equals(name)) {
+        for (TileType type : VALUES) {
+            if (type.name.equals(name)) {
                 return type;
             }
         }
