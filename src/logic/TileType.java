@@ -1,21 +1,19 @@
-package tiles;
+package logic;
 
 import java.util.Random;
 
-// There should be common parameters of tile
-public enum TileType {
+public enum TileType {      //Ландшафт плитки
     Grass("grass", 1),
     Sand("sand", 2),
-    Gravel("gravel", 3), // add more
+    Gravel("gravel", 3),
     Snow("snow", 4),
     Cobblestone("cobblestone", 5);
 
     final static private TileType [] VALUES = TileType.values();
     final static private Random randomizer =  new Random();
 
-    private final String name;
-    private int time;
-    // Здесь может быть еще куча параметров
+    private final String name;    //Имя ландшафта
+    private int time;             //Время его прохождения
 
     TileType(String name, int time) {
         this.name = name;
@@ -38,9 +36,10 @@ public enum TileType {
     static public TileType random() {
         return VALUES[randomizer.nextInt(VALUES.length)];
     }
+
     static public TileType ID(String name) {
-        for(TileType type: VALUES) {
-            if(type.name.equals(name)) {
+        for (TileType type : VALUES) {
+            if (type.name.equals(name)) {
                 return type;
             }
         }
