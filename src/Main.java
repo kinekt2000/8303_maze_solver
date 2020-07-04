@@ -11,8 +11,7 @@ public class Main {
         x = Integer.parseInt(reader.readLine());
         y = Integer.parseInt(reader.readLine());
 
-        Field field = new Field(x, y);
-        field.setRandomLandscape();
+        Field field = new Field(x, y, TileType.Grass);
         field.print();
 
         Cell startCell = new Cell(0,0);

@@ -3,9 +3,9 @@ import java.util.*;
 
 public class Field implements Serializable {    //Класс поля, содержащий алгоритмы для поиска кратчайших путей
 
-    transient Tile[][] fieldTiles;  //Карта клеток
-    private final int width;    //Ширина
-    private final int height;   //Высота
+    protected transient Tile[][] fieldTiles;  //Карта клеток
+    protected int width;    //Ширина
+    protected int height;   //Высота
     private transient boolean algIsWork;  //Флаг работы алгоритма поиска пути
     private transient boolean isAlgManyTargetIsWork;  //Флаг работы алгоритма поиска пути до нескольких сундуков
     private transient boolean isAStar;   //Флаг выполнения алгоритма АСтар
@@ -25,6 +25,18 @@ public class Field implements Serializable {    //Класс поля, соде�
         this.width = width;
         this.height = height;
         fieldTiles = new Tile[height][width];
+        algIsWork = false;
+        isAlgManyTargetIsWork = false;
+        setRandomLandscape();
+    }
+
+    public Field(int width, int height, TileType type) {    //Конструктор поля
+        this.width = width;
+        this.height = height;
+        fieldTiles = new Tile[height][width];
+        for (int i = 0; i<height; i++)
+            for (int j=0; j<width; j++)
+                fieldTiles[i][j] = new Tile(i, j, type);
         algIsWork = false;
         isAlgManyTargetIsWork = false;
     }
@@ -80,7 +92,7 @@ public class Field implements Serializable {    //Класс поля, соде�
         }
     }
 
-    public void setRandomLandscape() {   //Случайное создание поля
+    private void setRandomLandscape() {   //Случайное создание поля
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++)
                 fieldTiles[j][i] = new Tile(i, j, TileType.random());
