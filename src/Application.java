@@ -1,22 +1,31 @@
+import ConcreteListeners.AlgorithmListener;
+import ConcreteListeners.FileListener;
+import ConcreteListeners.LandscapeListener;
+import ConcreteListeners.ObjectsListener;
+
 import UI.UI;
 import UI.dialog.Dialog;
 import UI.dialog.DialogRaiser;
 
+import DrawableModel.TileHighlighter;
+import DrawableModel.TileMap;
+
 import render.Canvas;
 import render.Drawable;
+
 import resources.ResourceManager;
-import tiles.TileType;
+
+import logic.TileType;
 
 import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.*;
-
 import java.awt.image.BufferedImage;
+
 import java.io.IOException;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -43,9 +52,7 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
     FileListener fileListener;
     LandscapeListener landscapeListener;
     ObjectsListener objectsListener;
-
-    Scout scout;
-    List<Chest> chests;
+    AlgorithmListener algorithmListener;
 
     TileMap map;
     final int tileSize = 16;
@@ -112,7 +119,7 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
         g2d.fillRect(0, 0, background.getWidth(), background.getHeight());
         g2d.dispose();
 
-        map = new TileMap(10, 10);
+        map = new TileMap(10, 10, 16);
 
         try {
             ui = new UI(1024, 1024);
@@ -121,15 +128,15 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
             System.exit(1);
         }
 
-        fileListener = new FileListener(this);
+        fileListener = new FileListener(this, map);
         landscapeListener = new LandscapeListener(this);
         objectsListener = new ObjectsListener();
+        algorithmListener = new AlgorithmListener(map);
 
         ui.addListener("file_menu", fileListener);
         ui.addListener("landscape_menu", landscapeListener);
         ui.addListener("objects_menu", objectsListener);
-
-        chests = new LinkedList<>();
+        ui.addListener("algorithm_menu", algorithmListener);
 
         renderTimer.start();
         logicTimer.start();
@@ -138,15 +145,12 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
 
     public void paint(Graphics g){
         super.paint(g);
-//        g.setColor(Color.BLACK);
-//        g.fillRect(0, 0, getSize().width, getSize().height);
         g.drawImage(background, 0, 0, null);
 
         // compile a list of objects
-        List<Drawable> objectsToDraw = new ArrayList<>(map.getRenderObjects());
+        List<Drawable> objectsToDraw = new ArrayList<>();
+        objectsToDraw.add(map);
         if(highlighter != null) objectsToDraw.add(highlighter);
-        if(scout != null) objectsToDraw.add(scout);
-        objectsToDraw.addAll(chests);
 
         // draw on canvas
         canvas.draw(g, objectsToDraw);
@@ -167,11 +171,6 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
         }
     }
 
-    public void mapResize(int width, int height) {
-        map = new TileMap(width, height);
-        scout = null;
-        chests.clear();
-    }
 
     @Override
     public void mouseDragged(MouseEvent e) {
@@ -226,44 +225,14 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
 
         TileType brush = landscapeListener.getBrush();
         if(brush != null) {
+            map.setCell(mappedX, mappedY, brush);
             System.out.println("set type of tile (" + mappedX + "; " + mappedY + ") in " + brush.toString());
         }
 
-        if(objectsListener.isSetScout()){
-            if(SwingUtilities.isLeftMouseButton(e)) {
-                if (scout == null) {
-                    scout = new Scout(ResourceManager.getTexture("scout"), mappedX, mappedY, tileSize);
-                } else {
-                    System.out.println("There can be only ONE!");
-                }
-            } else if (SwingUtilities.isRightMouseButton(e)) {
-                if(scout != null) {
-                    if(scout.getX() == mappedX && scout.getY() == mappedY) {
-                        scout = null;
-                    }
-                }
-            }
-        }
-
-        if(objectsListener.isSetChest()) {
-            int i = 0;
-            for(Chest chest: chests) {
-                if(chest.getX() == mappedX && chest.getY() == mappedY)
-                    break;
-                i++;
-            }
-
-            if(SwingUtilities.isLeftMouseButton(e)) {
-                if(i == chests.size()) {
-                    chests.add(new Chest(ResourceManager.getTexture("chest"), mappedX, mappedY, tileSize));
-                } else {
-                    System.out.println("Chest already placed");
-                }
-            } else if (SwingUtilities.isRightMouseButton(e)) {
-                if(i != chests.size()) {
-                    chests.remove(i);
-                }
-            }
+        if(SwingUtilities.isLeftMouseButton(e)) {
+            objectsListener.setEntity(map, mappedX, mappedY);
+        } else if (SwingUtilities.isRightMouseButton(e)) {
+            objectsListener.removeEntity(map, mappedX, mappedY);
         }
     }
 
@@ -298,7 +267,7 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
 
         addKeyListener(dialog);
 
-        dialog.setPosition(getWidth()/2 - dialog.getHeight()/2, getHeight()/2 - dialog.getHeight()/2);
+        dialog.setPosition(getWidth()/2 - dialog.getWidth()/2, getHeight()/2 - dialog.getHeight()/2);
     }
 
     @Override
@@ -309,16 +278,7 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
         addMouseListener(this);
         addMouseMotionListener(this);
 
-        if(dialog.isAccepted()) checkDialogOut(dialog);
-
         dialog = null;
-    }
-
-    private void checkDialogOut(Dialog dialog) {
-        if(dialog.getName().equals("resize")) {
-            ResizeDialog rDialog = (ResizeDialog) dialog;
-            mapResize(rDialog.getMapWidth(), rDialog.getMapHeight());
-        }
     }
 
 
