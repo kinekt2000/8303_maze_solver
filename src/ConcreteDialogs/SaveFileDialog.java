@@ -1,3 +1,5 @@
+package ConcreteDialogs;
+
 import UI.Line;
 
 import java.awt.*;
