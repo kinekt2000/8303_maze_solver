@@ -1,7 +1,6 @@
 package UI;
 
 import java.awt.*;
-import java.awt.font.FontRenderContext;
 
 public class Line {
     private int x;
@@ -14,7 +13,7 @@ public class Line {
 
     String line;
 
-    Line(int x, int y, int width, int height) {
+    public Line(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -44,6 +43,9 @@ public class Line {
 
     public void setLine(String line) {
         this.line = line;
+    }
+    public String getLine() {
+        return this.line;
     }
 
     public void draw(Graphics g) {

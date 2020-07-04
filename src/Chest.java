@@ -1,7 +1,9 @@
+import render.Drawable;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Chest implements Drawable{
+public class Chest implements Drawable {
 
     private int x;
     private int y;

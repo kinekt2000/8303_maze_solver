@@ -33,12 +33,17 @@ public class UI{
 
         try {
             main = new MainPanel(width - MainPanel.width, 0,
+                    ImageIO.read(new File("assets/interface/file.png")),
                     ImageIO.read(new File("assets/interface/brush.png")),
                     ImageIO.read(new File("assets/interface/object.png")),
-                    ImageIO.read(new File("assets/interface/gear.png")));
+                    ImageIO.read(new File("assets/interface/path.png")));
+
+            additional.put("file_menu", new FilePanel(0, height - FilePanel.height,
+                    ImageIO.read(new File("assets/interface/resize.png")),
+                    ImageIO.read(new File("assets/interface/load.png")),
+                    ImageIO.read(new File("assets/interface/save.png"))));
 
             additional.put("landscape_menu", new LandscapePanel(0, height - LandscapePanel.height,
-                    ImageIO.read(new File("assets/interface/resize.png")),
                     ImageIO.read(new File("assets/interface/grass.png")),
                     ImageIO.read(new File("assets/interface/sand.png")),
                     ImageIO.read(new File("assets/interface/gravel.png")),
@@ -49,7 +54,11 @@ public class UI{
                     ImageIO.read(new File("assets/interface/chest.png")),
                     ImageIO.read(new File("assets/interface/scout.png"))));
 
-            additional.put("algorithm_menu", new AlgorithmPanel(0, height - AlgorithmPanel.height));
+            additional.put("algorithm_menu", new AlgorithmPanel(0, height - AlgorithmPanel.height,
+                    ImageIO.read(new File("assets/interface/play.png")),
+                    ImageIO.read(new File("assets/interface/forward.png")),
+                    ImageIO.read(new File("assets/interface/back.png"))));
+
         } catch (IOException e) {
             System.out.println(e.getMessage());
             throw new IOException("error during menu building", e);
@@ -82,12 +91,32 @@ public class UI{
 
         // save context
         Object old_antialias = g2d.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+        Color old_color = g2d.getColor();
 
         //change context
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+        // draw cosmetics
+        g2d.setColor(new Color(43, 42, 42, 255));
+        g2d.fillRect(main.getX(), main.getY(), main.getWidth(), main.getHeight());
+
+        g2d.setColor(new Color(60, 60, 60, 255));
+        g2d.fillRect(main.getX()+5, main.getY()+5,
+                main.getWidth()-10, main.getHeight()-10);
+
+
         main.draw(g2d);
-        if(subMenu != null) subMenu.draw(g2d);
+        if(subMenu != null) {
+            // draw cosmetics
+            g2d.setColor(new Color(43, 42, 42, 255));
+            g2d.fillRect(subMenu.getX(), subMenu.getY(), subMenu.getWidth(), subMenu.getHeight());
+
+            g2d.setColor(new Color(60, 60, 60, 255));
+            g2d.fillRect(subMenu.getX()+2, subMenu.getY()+2,
+                    subMenu.getWidth()-4, subMenu.getHeight()-4);
+
+            subMenu.draw(g2d);
+        }
 
         // restore context
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, old_antialias);
@@ -111,7 +140,9 @@ public class UI{
                 ButtonPanel subMenu = additional.getOrDefault(subMenuID, null);
                 if(this.subMenu != null && this.subMenu != subMenu){
                     this.subMenu.drop();
-                    listeners.get(subMenuID).drop();
+                    try {
+                        listeners.get(this.subMenuID).drop();
+                    } catch (NullPointerException dummy) {}
                 }
                 this.subMenu = subMenu;
                 this.subMenuID = subMenuID;
@@ -125,14 +156,12 @@ public class UI{
                 String button = subMenu.press(x, y);
                 if(button == null) return;
 
-                System.out.println(subMenuID);
-
                 boolean pressed = subMenu.isButtonPressed(button);
                 try {
                     listeners.get(subMenuID).notify(button, pressed, e);
                 } catch (NullPointerException exception) {
-                    System.out.println("Desync between menu name and listener name");
-                    exception.printStackTrace();
+                    System.out.println("Can't find appropriate listener for \"" + subMenuID + "\"");
+//                    exception.printStackTrace();
                 }
 
                 if(!SwingUtilities.isLeftMouseButton(e)) {

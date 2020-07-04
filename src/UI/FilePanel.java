@@ -3,35 +3,30 @@ package UI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-class AlgorithmPanel extends ButtonPanel{
+public class FilePanel extends ButtonPanel{
 
     final static public int width = 240;
     final static public int height = 80;
 
-    AlgorithmPanel(int x, int y,
-                   BufferedImage run_button_texture,
-                   BufferedImage step_forward_texture,
-                   BufferedImage step_back_texture) {
+    FilePanel(int x, int y,
+              BufferedImage resize_file_texture,
+              BufferedImage load_file_texture,
+              BufferedImage save_file_texture) {
         super(x, y, width, height);
-        super.addButton(new Button("run", run_button_texture, 40, 40, 30));
-        super.addButton(new Button("forward", step_forward_texture, 120, 40, 30));
-        super.addButton(new Button("back", step_back_texture, 200, 40, 30));
+
+        super.addButton(new Button("resize", resize_file_texture, 40, 40, 30));
+        super.addButton(new Button("load", load_file_texture, 120, 40, 30));
+        super.addButton(new Button("save", save_file_texture, 200, 40, 30));
     }
 
+    @Override
     public int getWidth() {
         return width;
     }
 
+    @Override
     public int getHeight() {
         return height;
-    }
-
-    @Override
-    public void draw(Graphics g) {
-        // draw cosmetics
-
-        // draw buttons
-        super.drawButtons(g);
     }
 
     @Override
@@ -48,5 +43,13 @@ class AlgorithmPanel extends ButtonPanel{
         if(pressed != null)
             return pressed.getID();
         return null;
+    }
+
+    @Override
+    void draw(Graphics g) {
+        // draw cosmetics
+
+        // draw buttons
+        super.drawButtons(g);
     }
 }

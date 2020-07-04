@@ -1,8 +1,9 @@
 import UI.UI;
 import UI.dialog.Dialog;
 import UI.dialog.DialogRaiser;
-import UI.ResizeDialog;
 
+import render.Canvas;
+import render.Drawable;
 import resources.ResourceManager;
 import tiles.TileType;
 
@@ -11,6 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -31,11 +33,14 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
 
     double time = System.currentTimeMillis();
 
-    Canvas canvas;
+    BufferedImage background;
+    render.Canvas canvas;
     TileHighlighter highlighter;
 
     UI ui;
     Dialog dialog = null;
+
+    FileListener fileListener;
     LandscapeListener landscapeListener;
     ObjectsListener objectsListener;
 
@@ -55,6 +60,19 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
             @Override
             public void componentResized(ComponentEvent e) {
                 ui.setSize(getWidth(), getHeight());
+                if(dialog != null) {
+                    dialog.setPosition((getWidth() - dialog.getWidth())/2,
+                            (getHeight() - dialog.getHeight())/2);
+                }
+
+                background = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+                Graphics2D g2d = (Graphics2D) background.getGraphics();
+                RadialGradientPaint gradient= new RadialGradientPaint(background.getWidth()/2, background.getHeight()/2,
+                        Math.max(background.getWidth()/2, background.getHeight()/2),
+                        new float[] {0.0f, 1f}, new Color[]{Color.DARK_GRAY, Color.LIGHT_GRAY});
+                g2d.setPaint(gradient);
+                g2d.fillRect(0, 0, background.getWidth(), background.getHeight());
+                g2d.dispose();
             }
 
             @Override
@@ -86,6 +104,13 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
         });
 
         canvas = new Canvas();
+        background = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = (Graphics2D) background.getGraphics();
+        RadialGradientPaint gradient= new RadialGradientPaint(background.getWidth()/2, background.getHeight()/2,1,
+                new float[] {0.0f, 0.5f}, new Color[]{Color.DARK_GRAY, Color.WHITE});
+        g2d.setPaint(gradient);
+        g2d.fillRect(0, 0, background.getWidth(), background.getHeight());
+        g2d.dispose();
 
         map = new TileMap(10, 10);
 
@@ -96,8 +121,11 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
             System.exit(1);
         }
 
+        fileListener = new FileListener(this);
         landscapeListener = new LandscapeListener(this);
         objectsListener = new ObjectsListener();
+
+        ui.addListener("file_menu", fileListener);
         ui.addListener("landscape_menu", landscapeListener);
         ui.addListener("objects_menu", objectsListener);
 
@@ -110,8 +138,9 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
 
     public void paint(Graphics g){
         super.paint(g);
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, getSize().width, getSize().height);
+//        g.setColor(Color.BLACK);
+//        g.fillRect(0, 0, getSize().width, getSize().height);
+        g.drawImage(background, 0, 0, null);
 
         // compile a list of objects
         List<Drawable> objectsToDraw = new ArrayList<>(map.getRenderObjects());
@@ -300,11 +329,12 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
         JFrame window = new JFrame();
         Application field = new Application();
 
-        window.setSize(1024, 1024);
+        window.setSize(700, 700);
         window.setLocationRelativeTo(null);
 
         window.setTitle("Path finder");
-        window.setResizable(false);
+        window.setResizable(true);
+        window.setMinimumSize(new Dimension(700, 700));
 
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.add(field);

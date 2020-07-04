@@ -6,17 +6,19 @@ import java.awt.image.BufferedImage;
 class MainPanel extends ButtonPanel{
 
     final static public int width = 160;
-    final static public int height = 480;
+    final static public int height = 640;
 
     MainPanel(int x, int y,
+                     BufferedImage file_button_texture,
                      BufferedImage landscape_button_texture,
                      BufferedImage add_object_button_texture,
                      BufferedImage algorithm_button_texture)
     {
         super(x, y , width, height);
-        super.addButton(new Button("landscape_menu", landscape_button_texture, 80, 80, 60));
-        super.addButton(new Button("objects_menu", add_object_button_texture, 80, 240, 60));
-        super.addButton(new Button("algorithm_menu", algorithm_button_texture, 80, 400, 60));
+        super.addButton(new Button("file_menu", file_button_texture, 80, 80, 60));
+        super.addButton(new Button("landscape_menu", landscape_button_texture, 80, 240, 60));
+        super.addButton(new Button("objects_menu", add_object_button_texture, 80, 400, 60));
+        super.addButton(new Button("algorithm_menu", algorithm_button_texture, 80, 560, 60));
     }
 
     public int getWidth() {

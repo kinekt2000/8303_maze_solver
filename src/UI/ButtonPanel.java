@@ -13,13 +13,21 @@ abstract class ButtonPanel {
     private int width;
     private int height;
 
-    ButtonPanel(int x, int y, int width, int height) {
+    protected ButtonPanel(int x, int y, int width, int height) {
         buttons = new ArrayList<>();
 
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     abstract public int getWidth();
