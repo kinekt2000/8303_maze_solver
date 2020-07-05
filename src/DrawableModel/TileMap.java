@@ -77,8 +77,15 @@ public class TileMap extends Field implements Drawable{
         && y >= 0 && y < getHeight()) {
 
             if (scout == null) {
+
+                for(Chest chest: chests) {
+                    if(chest.getX() == x && chest.getY() == y) {
+                        System.out.println("There is a chest");
+                        return;
+                    }
+                }
+
                 scout = new Scout(x, y, tileSize);
-                clear();
                 init();
 
             } else {
@@ -90,7 +97,6 @@ public class TileMap extends Field implements Drawable{
     public void removeScout(int x, int y) {
         if(scout == null) return;
         if(scout.getX() == x && scout.getY() == y) {
-            clear();
             init();
             scout = null;
         }
@@ -105,8 +111,15 @@ public class TileMap extends Field implements Drawable{
                     return;
                 }
             }
+
+            if(scout != null) {
+                if(scout.getX() == x && scout.getY() == y) {
+                    System.out.println("There is a scout");
+                    return;
+                }
+            }
+
             chests.add(new Chest(x, y, tileSize));
-            clear();
             init();
         }
     }
@@ -115,7 +128,6 @@ public class TileMap extends Field implements Drawable{
         for(Chest chest: chests) {
             if(chest.getX() == x && chest.getY() == y) {
                 chests.remove(chest);
-                clear();
                 init();
                 break;
             }
@@ -123,6 +135,7 @@ public class TileMap extends Field implements Drawable{
     }
 
     private void init() {
+        clear();
         drawablePath.clear();
         if(scout != null && chests.size() > 0) {
             setStartCell(scout);
@@ -143,9 +156,9 @@ public class TileMap extends Field implements Drawable{
             try {
                 super.run();
                 if(chests.size() == 1) {
-                    drawablePath.addPath(getPath());
+                    drawablePath.setPath(getPath());
                 } else {
-                    drawablePath.addPath(getFullPath());
+                    drawablePath.setPath(getFullPath());
                 }
                 clear();
             } catch (CloneNotSupportedException e) {
@@ -175,6 +188,10 @@ public class TileMap extends Field implements Drawable{
                 e.printStackTrace();
             }
         }
+    }
+
+    public void stepBack() {
+        super.previousStep();
     }
 
     @Override
