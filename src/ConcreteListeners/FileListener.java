@@ -27,11 +27,11 @@ public class FileListener implements UI.Listener{
         }
 
         if(function.equals("load")) {
-            raiser.raiseDialog(new OpenFileDialog());
+            raiser.raiseDialog(new OpenFileDialog(map));
         }
 
         if(function.equals("save")) {
-            raiser.raiseDialog(new SaveFileDialog());
+            raiser.raiseDialog(new SaveFileDialog(map));
         }
     }
 
