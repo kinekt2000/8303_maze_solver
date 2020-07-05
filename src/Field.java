@@ -191,8 +191,16 @@ public class Field implements Serializable {    //Класс поля, соде�
     }
 
     public boolean stepFindPath() { //Шаг поиска поиска кратчайшего пути от одной клетки к другой
-        if (currentCell.getX() == finishCell.getX() && currentCell.getY() == finishCell.getY())   //Если найден путь то финальной клетки, то подача сигнала о завершении
+        System.out.println(finishCell);
+        if (currentCell.getX() == finishCell.getX() && currentCell.getY() == finishCell.getY()) {   //Если найден путь то финальной клетки, то подача сигнала о завершении
+            //finishCell = null;
+            System.out.println(finishCell);
             return false;
+        }
+
+        if (finishCell == null) {
+            return false;
+        }
 
         currentCell = Collections.min(notVisitedCells, (c1, c2) -> (int) (c1.getDistanceFunction() - c2.getDistanceFunction()));  //Берется ближайшая клетка
         fieldTiles[currentCell.getY()][currentCell.getX()].isVisited = true;   //Отмечается как посещенная
@@ -322,7 +330,16 @@ public class Field implements Serializable {    //Класс поля, соде�
         if (notVisitedCells.isEmpty())  //Если все клетки посещены, то алгоритм заканчивает работу
             return false;
 
+
         currentCell = Collections.min(notVisitedCells, (c1, c2) -> (int) (c1.getDistance() - c2.getDistance()));  //Берется ближайшая клетка из списка непосещенных вершин
+
+        for (Cell el: finishCells){
+            if (el.getX() == currentCell.getX() && el.getY() == currentCell.getY()) {
+                fieldTiles[currentCell.getY()][currentCell.getX()].isVisited = true;
+                return false;
+            }
+        }
+
         fieldTiles[currentCell.getY()][currentCell.getX()].isVisited = true;   //Отмечается как посещенная
         notVisitedCells.remove(currentCell);   //Удаляется из списка непосещенных
         minimalPathMap[currentCell.getY()][currentCell.getX()] = currentCell.getDistance();  //Изменяется расстояние в карте
@@ -444,17 +461,17 @@ public class Field implements Serializable {    //Класс поля, соде�
         outputStream.close();
     }
 
-    public Field load(String filename) throws IOException, ClassNotFoundException {      //Функция загрузки поля
+    public void load(String filename) throws IOException, ClassNotFoundException {      //Функция загрузки поля
         ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(filename));
         Field field = (Field) inputStream.readObject();       //Загрузка поля
-
+        this.height = field.height;
+        this.width = field.width;
         Tile[][] fieldCell = new Tile[field.height][field.width];
         for (int j = 0; j < field.width; j++)
             for (int i = 0; i < field.height; i++)
                 fieldCell[j][i] = (Tile) inputStream.readObject();  //Загрузка каждой клетки
-        field.fieldTiles = fieldCell;
+        this.fieldTiles = fieldCell;
         inputStream.close();
-        return field;
     }
 
     public ArrayList<ArrayList<Cell>> findAllPath() throws CloneNotSupportedException {  //Нахождение всех кратчайших путей до сундука
