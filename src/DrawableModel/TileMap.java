@@ -9,16 +9,17 @@ import logic.TileType;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class TileMap extends Field implements Drawable{
-    int tileSize = 16; // tile size in pixels
+    transient int tileSize = 16; // tile size in pixels
 
-    Scout scout;
-    ArrayList<Chest> chests;
-    DrawablePath drawablePath;
+    transient Scout scout;
+    transient ArrayList<Chest> chests;
+    transient DrawablePath drawablePath;
 
-    boolean initialized = false; //equals true, when there is a scout and at least one chest
+    transient boolean initialized = false; //equals true, when there is a scout and at least one chest
 
     public TileMap(int width, int height, int tileSize, TileType initialType) {
         super(width, height, initialType);
@@ -141,7 +142,12 @@ public class TileMap extends Field implements Drawable{
         if(initialized) {
             try {
                 super.run();
-                drawablePath.build(getPath());
+                if(chests.size() == 1) {
+                    drawablePath.addPath(getPath());
+                } else {
+                    drawablePath.addPath(getFullPath());
+                }
+                clear();
             } catch (CloneNotSupportedException e) {
                 System.out.println(e.getMessage());
             } catch (Exception e) {
@@ -154,8 +160,15 @@ public class TileMap extends Field implements Drawable{
     public void stepForward() {
         if(initialized) {
             try {
-                nextStep();
-                drawablePath.build(getPath());
+                if(!nextStep()) {
+                    clear();
+                }
+
+                if(chests.size() == 1) {
+                    drawablePath.setPath(getPath());
+                } else {
+                    drawablePath.setPath(getFullPath());
+                }
             } catch (CloneNotSupportedException e) {
                 System.out.println(e.getMessage());
             } catch (Exception e) {
@@ -192,4 +205,15 @@ public class TileMap extends Field implements Drawable{
 
         g.setColor(oldColor);
     }
+
+    @Override
+    public void save(String filename) throws IOException {
+        ((Field) this).save(filename);
+    }
+
+//    @Override
+//    public void load(String filename) throws IOException, ClassNotFoundException {
+//
+//        return super.load(filename);
+//    }
 }
