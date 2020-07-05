@@ -8,6 +8,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 
 import java.util.List;
+import java.util.Random;
 
 public class DrawablePath implements Drawable {
 
@@ -17,9 +18,14 @@ public class DrawablePath implements Drawable {
 
     BufferedImage mappedPath;
     GeneralPath pathLine;
-    boolean empty = true;
+    Random randomizer;
+
+    Color color;
+    boolean restrictRecolor = false;
 
     public DrawablePath(int mapWidth, int mapHeight, int tileSize) {
+        randomizer = new Random();
+
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
         this.tileSize = tileSize;
@@ -27,10 +33,14 @@ public class DrawablePath implements Drawable {
         pathLine = new GeneralPath();
     }
 
-    public void addPath(List<Cell> path) {
+    public void addPath(List<Cell> path, Color lineColor) {
         if (path == null) return;
         if (path.size() == 0) return;
 
+        if(mappedPath == null)
+            mappedPath = new BufferedImage(mapWidth * tileSize, mapHeight * tileSize, BufferedImage.TYPE_INT_ARGB);
+
+        boolean empty = true;
         for(int i = 0; i < path.size(); i++){
             Cell cell = path.get(i);
 
@@ -59,7 +69,7 @@ public class DrawablePath implements Drawable {
                         int border_next_y = cell_y + vny * tileSize/2;
 
                         pathLine.lineTo(border_prev_x, border_prev_y);
-                        pathLine.lineTo(border_next_x, border_next_y);
+                        pathLine.curveTo(border_prev_x, border_prev_y, cell_x, cell_y, border_next_x, border_next_y);
                     } else {
                         pathLine.lineTo(cell_x, cell_y);
                     }
@@ -69,7 +79,7 @@ public class DrawablePath implements Drawable {
             }
         }
 
-        mappedPath = new BufferedImage(mapWidth * tileSize, mapHeight * tileSize, BufferedImage.TYPE_INT_ARGB);
+//        mappedPath = new BufferedImage(mapWidth * tileSize, mapHeight * tileSize, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = (Graphics2D) mappedPath.getGraphics();
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -79,25 +89,51 @@ public class DrawablePath implements Drawable {
         g2d.draw(pathLine);
 
         g2d.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g2d.setColor(new Color(255, 0, 255, 127));
+        g2d.setColor(lineColor);
         g2d.draw(pathLine);
         g2d.dispose();
     }
 
 
-    public void setPath(List<Cell> path) {
+    public void addPath(List<Cell> path) {
+        int r = randomizer.nextInt(256);
+        int g = randomizer.nextInt(256);
+        int b = randomizer.nextInt(256);
+
+        Color color = new Color(r, g, b, 127);
+        addPath(path, color);
+    }
+
+
+    public void setPath(List<Cell> path, Color lineColor) {
         if (path == null) return;
         if (path.size() < 2) return;
 
-        clear();
-        addPath(path);
+        if(!restrictRecolor) {
+            restrictRecolor = true;
+            color = lineColor;
+        }
+
+        mappedPath = null;
+        pathLine = new GeneralPath();
+        addPath(path, color);
+    }
+
+
+    public void setPath(List<Cell> path) {
+        int r = randomizer.nextInt(256);
+        int g = randomizer.nextInt(256);
+        int b = randomizer.nextInt(256);
+
+        Color color = new Color(r, g, b, 127);
+        setPath(path, color);
     }
 
 
     public void clear() {
         mappedPath = null;
         pathLine = new GeneralPath();
-        empty = true;
+        restrictRecolor = false;
     }
 
     @Override
