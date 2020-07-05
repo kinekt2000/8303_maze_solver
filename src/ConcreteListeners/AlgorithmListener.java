@@ -24,7 +24,7 @@ public class AlgorithmListener implements Listener{
         }
 
         if(function.equals("back")) {
-            // return to saved copy
+            target.stepBack();
         }
 
         if(function.equals("forward")) {
