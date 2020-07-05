@@ -1,13 +1,23 @@
+package ConcreteDialogs;
+
+import DrawableModel.TileMap;
 import UI.Line;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 public class SaveFileDialog extends FileDialog{
 
     int maxInputName = 10;
     boolean input = false;
+
+    TileMap target;
+
+    public SaveFileDialog(TileMap target) {
+        this.target = target;
+    }
 
     @Override
     public String getName() {
@@ -26,6 +36,16 @@ public class SaveFileDialog extends FileDialog{
         }
 
         super.mouseClicked(e);
+
+        if(accepted) {
+            if(target != null && chosen.getLine().length() > 0) {
+                try {
+                    target.save("saves/" + chosen.getLine() + ".pfsv");
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override

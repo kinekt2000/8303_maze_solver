@@ -1,6 +1,10 @@
+package ConcreteDialogs;
+
 import UI.Button;
 import UI.Line;
 import UI.dialog.Dialog;
+import logic.TileType;
+import logic.TileTypeException;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -9,34 +13,39 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
-public class ResizeDialog implements Dialog{
+public class ChangeTileTypeDialog implements Dialog {
 
-    final static public int width = 200;
-    final static public int height = 120;
-    final static public String name = "resize";
+    public final int width = 310;
+    public final int height = 120;
+    public final String name = "change_tile_type";
 
-    private int x = 0;
-    private int y = 0;
+    private int x;
+    private int y;
 
-    UI.Button accept;
-    UI.Button cancel;
+    Button accept;
+    Button cancel;
 
-    private int mapWidth = 0;
-    private int mapHeight = 0;
+    Line labelLine;
+    Line valueLine;
+    boolean targeted = false;
 
-    Line widthLine;
-    Line heightLine;
-
-    Line target = null;
+    TileType typeToChange;
 
     boolean close = false;
     boolean accepted = false;
     boolean canceled = false;
 
-    public ResizeDialog(){
+    private int overcomeTime = 0;
+
+    public ChangeTileTypeDialog(String typeName) {
+        typeToChange = TileType.ID(typeName);
+        if(typeToChange == null) {
+            throw new TileTypeException("Wrong type cast in ConcreteDialogs.ChangeTileTypeDialog");
+        } else {
+            overcomeTime = typeToChange.getTime();
+        }
+
         BufferedImage acceptTexture = null;
         try{
             acceptTexture = ImageIO.read(new File("assets/interface/accept.png"));
@@ -44,7 +53,7 @@ public class ResizeDialog implements Dialog{
             System.out.println(e.getMessage());
         }
 
-        accept = new UI.Button("accept", acceptTexture, width - 15, height - 15, 10);
+        accept = new Button("accept", acceptTexture, width - 15, height - 15, 10);
 
         BufferedImage cancelTexture = null;
         try{
@@ -53,13 +62,15 @@ public class ResizeDialog implements Dialog{
             System.out.println(e.getMessage());
         }
 
-        cancel = new UI.Button("cancel", cancelTexture, width - 45, height - 15, 10);
+        cancel = new Button("cancel", cancelTexture, width - 45, height - 15, 10);
 
-        widthLine = new Line(20, 10, 160, 30);
-        widthLine.setLine("width: " + mapWidth);
+        labelLine = new Line(20, 10, 160, 30);
+        labelLine.setLine("Set new overcome time");
+        labelLine.setBackColor(new Color(43, 42, 42, 255));
+        labelLine.setFrontColor(Color.LIGHT_GRAY);
 
-        heightLine = new Line(20, 50, 160, 30);
-        heightLine.setLine("height: " + mapHeight);
+        valueLine = new Line(75, 50, 160, 30);
+        valueLine.setLine("time: " + overcomeTime);
     }
 
     @Override
@@ -69,9 +80,8 @@ public class ResizeDialog implements Dialog{
 
         accept.move(dx, dy);
         cancel.move(dx, dy);
-        widthLine.move(dx, dy);
-        heightLine.move(dx, dy);
-
+        labelLine.move(dx, dy);
+        valueLine.move(dx, dy);
 
         this.x = x;
         this.y = y;
@@ -102,14 +112,6 @@ public class ResizeDialog implements Dialog{
         return name;
     }
 
-    public int getMapWidth() {
-        return mapWidth;
-    }
-
-    public int getMapHeight() {
-        return mapHeight;
-    }
-
     @Override
     public boolean isAccepted() {
         return accepted;
@@ -125,8 +127,8 @@ public class ResizeDialog implements Dialog{
         g.setColor(new Color(43, 42, 42, 255));
         g.fillRect(x, y, width, height);
 
-        widthLine.draw(g);
-        heightLine.draw(g);
+        labelLine.draw(g);
+        valueLine.draw(g);
 
         accept.draw(g);
         cancel.draw(g);
@@ -139,7 +141,7 @@ public class ResizeDialog implements Dialog{
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if(target == null) return;
+        if(!targeted) return;
 
         char c = e.getKeyChar();
 
@@ -147,43 +149,20 @@ public class ResizeDialog implements Dialog{
 
         int digit = Character.getNumericValue(c);
 
-        if(target == widthLine){
-            int newMapWidth = mapWidth * 10 + digit;
-            if (newMapWidth <= 50) {
-                mapWidth = newMapWidth;
-                widthLine.setLine("width: " + mapWidth);
-            }
-
-            return;
-        }
-
-        if(target == heightLine) {
-            int newMapHeight = mapHeight * 10 + digit;
-            if (newMapHeight <= 50) {
-                mapHeight = newMapHeight;
-                heightLine.setLine("height: " + mapHeight);
-            }
-
-            return;
+        int newTime = overcomeTime * 10 + digit;
+        if(newTime <= 20){
+            overcomeTime = newTime;
+            valueLine.setLine("time: " + overcomeTime);
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(target == null) return;
+        if(!targeted) return;
         if(e.getKeyCode() != KeyEvent.VK_BACK_SPACE) return;
 
-        if(target == widthLine) {
-            mapWidth /= 10;
-            widthLine.setLine("width: " + mapWidth);
-            return;
-        }
-
-        if(target == heightLine) {
-            mapHeight /= 10;
-            heightLine.setLine("height: " + mapHeight);
-            return;
-        }
+        overcomeTime /= 10;
+        valueLine.setLine("time: " + overcomeTime);
     }
 
     @Override
@@ -192,6 +171,10 @@ public class ResizeDialog implements Dialog{
         int y = e.getY();
 
         if(accept.isPointIn(x, y)) {
+            if(overcomeTime != 0) {
+                typeToChange.setTime(overcomeTime);
+            }
+
             accepted = true;
             close = true;
             return;
@@ -203,16 +186,11 @@ public class ResizeDialog implements Dialog{
             return;
         }
 
-        if(widthLine.isPointIn(x, y)) {
-            if(target != null) target.setBackColor(Color.WHITE);
-            target = widthLine;
-            target.setBackColor(Color.LIGHT_GRAY);
-        }
-
-        if(heightLine.isPointIn(x, y)) {
-            if(target != null) target.setBackColor(Color.WHITE);
-            target = heightLine;
-            target.setBackColor(Color.LIGHT_GRAY);
+        if(valueLine.isPointIn(x, y)) {
+            targeted = !targeted;
+            if(targeted) valueLine.setBackColor(Color.LIGHT_GRAY);
+            else valueLine.setBackColor(Color.WHITE);
         }
     }
+
 }

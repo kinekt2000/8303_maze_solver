@@ -1,15 +1,18 @@
+package ConcreteListeners;
+
+import ConcreteDialogs.ChangeTileTypeDialog;
 import UI.dialog.DialogRaiser;
-import tiles.TileType;
+import logic.TileType;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 
 public class LandscapeListener implements UI.Listener{
 
-    tiles.TileType brush;
+    TileType brush;
     DialogRaiser raiser;
 
-    LandscapeListener(DialogRaiser raiser) {
+    public LandscapeListener(DialogRaiser raiser) {
         this.raiser = raiser;
     }
 

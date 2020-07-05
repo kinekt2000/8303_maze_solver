@@ -14,8 +14,8 @@ class AlgorithmPanel extends ButtonPanel{
                    BufferedImage step_back_texture) {
         super(x, y, width, height);
         super.addButton(new Button("run", run_button_texture, 40, 40, 30));
-        super.addButton(new Button("forward", step_forward_texture, 120, 40, 30));
-        super.addButton(new Button("back", step_back_texture, 200, 40, 30));
+        super.addButton(new Button("back", step_back_texture, 120, 40, 30));
+        super.addButton(new Button("forward", step_forward_texture, 200, 40, 30));
     }
 
     public int getWidth() {

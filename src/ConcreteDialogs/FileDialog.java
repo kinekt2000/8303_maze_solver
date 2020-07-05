@@ -1,3 +1,5 @@
+package ConcreteDialogs;
+
 import UI.dialog.Dialog;
 import UI.dialog.DialogException;
 import UI.Line;
