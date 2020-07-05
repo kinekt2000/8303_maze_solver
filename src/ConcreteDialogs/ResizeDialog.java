@@ -154,20 +154,22 @@ public class ResizeDialog implements Dialog{
 
         if(target == widthLine){
             int newMapWidth = mapWidth * 10 + digit;
-            if (newMapWidth <= 50) {
-                mapWidth = newMapWidth;
-                widthLine.setLine("width: " + mapWidth);
-            }
+
+            if(newMapWidth > 50) newMapWidth = 50;
+
+            mapWidth = newMapWidth;
+            widthLine.setLine("width: " + mapWidth);
 
             return;
         }
 
         if(target == heightLine) {
             int newMapHeight = mapHeight * 10 + digit;
-            if (newMapHeight <= 50) {
-                mapHeight = newMapHeight;
-                heightLine.setLine("height: " + mapHeight);
-            }
+
+            if(newMapHeight > 50) newMapHeight = 50;
+
+            mapHeight = newMapHeight;
+            heightLine.setLine("height: " + mapHeight);
 
             return;
         }

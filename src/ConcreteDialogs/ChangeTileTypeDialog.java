@@ -17,7 +17,7 @@ import java.io.IOException;
 public class ChangeTileTypeDialog implements Dialog {
 
     public final int width = 310;
-    public final int height = 120;
+    public final int height = 160;
     public final String name = "change_tile_type";
 
     private int x;
@@ -26,7 +26,7 @@ public class ChangeTileTypeDialog implements Dialog {
     Button accept;
     Button cancel;
 
-    Line labelLine;
+    Line[] labels = new Line[2];
     Line valueLine;
     boolean targeted = false;
 
@@ -64,12 +64,17 @@ public class ChangeTileTypeDialog implements Dialog {
 
         cancel = new Button("cancel", cancelTexture, width - 45, height - 15, 10);
 
-        labelLine = new Line(20, 10, 160, 30);
-        labelLine.setLine("Set new overcome time");
-        labelLine.setBackColor(new Color(43, 42, 42, 255));
-        labelLine.setFrontColor(Color.LIGHT_GRAY);
+        labels[0] = new Line(20, 10, 160, 30);
+        labels[0].setLine("Set new overcome time");
+        labels[0].setBackColor(new Color(43, 42, 42, 255));
+        labels[0].setFrontColor(Color.LIGHT_GRAY);
 
-        valueLine = new Line(75, 50, 160, 30);
+        labels[1] = new Line(17, 45, 160, 30);
+        labels[1].setLine("cannot be more than 20");
+        labels[1].setBackColor(new Color(43, 42, 42, 255));
+        labels[1].setFrontColor(Color.LIGHT_GRAY);
+
+        valueLine = new Line(75, 90, 160, 30);
         valueLine.setLine("time: " + overcomeTime);
     }
 
@@ -80,7 +85,9 @@ public class ChangeTileTypeDialog implements Dialog {
 
         accept.move(dx, dy);
         cancel.move(dx, dy);
-        labelLine.move(dx, dy);
+        for(Line line: labels) {
+            line.move(dx, dy);
+        }
         valueLine.move(dx, dy);
 
         this.x = x;
@@ -127,7 +134,9 @@ public class ChangeTileTypeDialog implements Dialog {
         g.setColor(new Color(43, 42, 42, 255));
         g.fillRect(x, y, width, height);
 
-        labelLine.draw(g);
+        for(Line line: labels) {
+            line.draw(g);
+        }
         valueLine.draw(g);
 
         accept.draw(g);
@@ -150,10 +159,11 @@ public class ChangeTileTypeDialog implements Dialog {
         int digit = Character.getNumericValue(c);
 
         int newTime = overcomeTime * 10 + digit;
-        if(newTime <= 20){
-            overcomeTime = newTime;
-            valueLine.setLine("time: " + overcomeTime);
-        }
+
+        if(newTime > 20) newTime = 20;
+
+        overcomeTime = newTime;
+        valueLine.setLine("time: " + overcomeTime);
     }
 
     @Override
