@@ -36,6 +36,8 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
 
     private int oldMouseX = 0;
     private int oldMouseY = 0;
+    private double scale = (double) java.awt.Toolkit.getDefaultToolkit().getScreenResolution() / 96;
+
 
     Timer renderTimer;
     Timer logicTimer;
@@ -175,8 +177,8 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
     @Override
     public void mouseDragged(MouseEvent e) {
         if(SwingUtilities.isLeftMouseButton(e)) {
-            int newMouseX = e.getX();
-            int newMouseY = e.getY();
+            int newMouseX = (int) (e.getX() * scale);
+            int newMouseY = (int) (e.getY() * scale);
 
             int offsetX = newMouseX - oldMouseX;
             int offsetY = newMouseY - oldMouseY;
@@ -191,8 +193,8 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
     @Override
     public void mouseMoved(MouseEvent e) {
         // get true coordinates of pixel field
-        double x = e.getX() / canvas.getCamera().getZoomFactor() - canvas.getCamera().getCameraOffsetX();
-        double y = e.getY() / canvas.getCamera().getZoomFactor() - canvas.getCamera().getCameraOffsetY();
+        double x = e.getX() * scale / canvas.getCamera().getZoomFactor() - canvas.getCamera().getCameraOffsetX();
+        double y = e.getY() * scale / canvas.getCamera().getZoomFactor() - canvas.getCamera().getCameraOffsetY();
 
         if(x >= 0 && x < (map.getWidth() * tileSize)
         && y >= 0 && y < (map.getHeight() * tileSize)) {
@@ -217,8 +219,8 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
             return;
         }
 
-        double x = e.getX() / canvas.getCamera().getZoomFactor() - canvas.getCamera().getCameraOffsetX();
-        double y = e.getY() / canvas.getCamera().getZoomFactor() - canvas.getCamera().getCameraOffsetY();
+        double x = e.getX() * scale / canvas.getCamera().getZoomFactor() - canvas.getCamera().getCameraOffsetX();
+        double y = e.getY() * scale / canvas.getCamera().getZoomFactor() - canvas.getCamera().getCameraOffsetY();
 
         int mappedX = (int)(x/tileSize);
         int mappedY = (int)(y/tileSize);
@@ -238,14 +240,14 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
 
     @Override
     public void mousePressed(MouseEvent e) {
-        oldMouseX = e.getX();
-        oldMouseY = e.getY();
+        oldMouseX = (int) (e.getX() * scale);
+        oldMouseY = (int) (e.getY() * scale);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        oldMouseX = e.getX();
-        oldMouseY = e.getY();
+        oldMouseX = (int) (e.getX() * scale);
+        oldMouseY = (int) (e.getY() * scale);
     }
 
     @Override
