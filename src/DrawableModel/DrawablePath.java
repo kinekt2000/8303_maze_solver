@@ -10,6 +10,9 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Image with path line, which is superimposed on map
+ */
 public class DrawablePath implements Drawable {
 
     int mapWidth;

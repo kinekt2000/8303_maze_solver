@@ -3,15 +3,17 @@ package UI;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UI{
+
+    static Logger LOGGER = Logger.getLogger(UI.class.getName());
 
     int width;
     int height;
@@ -23,6 +25,12 @@ public class UI{
     String subMenuID;
     ButtonPanel subMenu;
 
+    /**
+     * Builds interface with button panels on right and bottom borders
+     * @param width         width of window, to calculate positions of UI
+     * @param height        height of window, to calculate positions of UI
+     * @throws IOException  thrown when there is no appropriate assets
+     */
     public UI(int width, int height) throws IOException {
         this.width = width;
         this.height = height;
@@ -31,17 +39,20 @@ public class UI{
         listeners = new HashMap<>();
         ButtonPanel current;
 
+        LOGGER.info("UI building");
         try {
             main = new MainPanel(width - MainPanel.width, 0,
                     ImageIO.read(new File("assets/interface/file.png")),
                     ImageIO.read(new File("assets/interface/brush.png")),
                     ImageIO.read(new File("assets/interface/object.png")),
                     ImageIO.read(new File("assets/interface/path.png")));
+            LOGGER.info("Main panel is built");
 
             additional.put("file_menu", new FilePanel(0, height - FilePanel.height,
                     ImageIO.read(new File("assets/interface/resize.png")),
                     ImageIO.read(new File("assets/interface/load.png")),
                     ImageIO.read(new File("assets/interface/save.png"))));
+            LOGGER.info("File sub-menu is built");
 
             additional.put("landscape_menu", new LandscapePanel(0, height - LandscapePanel.height,
                     ImageIO.read(new File("assets/interface/grass.png")),
@@ -49,23 +60,36 @@ public class UI{
                     ImageIO.read(new File("assets/interface/gravel.png")),
                     ImageIO.read(new File("assets/interface/snow.png")),
                     ImageIO.read(new File("assets/interface/cobblestone.png"))));
+            LOGGER.info("Landscape sub-menu is built");
 
             additional.put("objects_menu", new ObjectsPanel(0, height - ObjectsPanel.height,
                     ImageIO.read(new File("assets/interface/chest.png")),
                     ImageIO.read(new File("assets/interface/scout.png"))));
+            LOGGER.info("Objects sub-menu is built");
 
             additional.put("algorithm_menu", new AlgorithmPanel(0, height - AlgorithmPanel.height,
                     ImageIO.read(new File("assets/interface/play.png")),
                     ImageIO.read(new File("assets/interface/forward.png")),
                     ImageIO.read(new File("assets/interface/back.png"))));
+            LOGGER.info("Algorithm sub-menu is built");
 
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            LOGGER.log(Level.SEVERE, "UI building error", e);
             throw new IOException("error during menu building", e);
         }
+
+        LOGGER.info("UI initialized");
     }
 
+    /**
+     * Changes position of inner button panels
+     * @param width     same as constructor
+     * @param height    same as constructor
+     */
     public void setSize(int width, int height) {
+
+        LOGGER.info("UI resized to " + width + "x" + height);
+
         this.width = width;
         this.height = height;
 
@@ -75,10 +99,23 @@ public class UI{
         }
     }
 
+    /**
+     * UI has several menus. There is a "landscape_menu", "file_menu",
+     * "objects menu", "algorithm menu".
+     * User should add Listener to sub-menu using id. Listener will be notified
+     * when any button of sub-menu is pressed
+     * @param subMenuName   ID of sub-menu
+     * @param listener      Listener for sub-menu with this ID
+     */
     public void addListener(String subMenuName, Listener listener) {
+        LOGGER.info("Added new listener " + listener.getClass() + " for " + subMenuName);
         listeners.put(subMenuName, listener);
     }
 
+    /**
+     * update state of panels
+     * @param ms    time from past state
+     */
     public void update(int ms) {
         main.update(ms);
         for(ButtonPanel panel: additional.values()) {
@@ -86,6 +123,10 @@ public class UI{
         }
     }
 
+    /**
+     * Draw UI on AWT Graphics
+     * @param g UI will be drawn from 0,0 position
+     */
     public void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
 
@@ -122,6 +163,13 @@ public class UI{
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, old_antialias);
     }
 
+    /**
+     * You can check is point (x, y) in main panel or
+     * on the sub-menu panel if there it is
+     * @param x
+     * @param y
+     * @return  return true if point in, else - false;
+     */
     public boolean isPointIn(int x, int y) {
         if(main.isPointIn(x, y)) return true;
         if(subMenu != null) {
@@ -130,13 +178,28 @@ public class UI{
         return false;
     }
 
+
+    /**
+     * If (x, y) on main panel and some button pressed, then
+     * there is sub-menu switch
+     * If(x, y) on sub-menu panel and some button press, then
+     * appropriate listener notified
+     * @param x
+     * @param y
+     * @param e MouseEvent object. (You can't get keyCode if mouseClicked called)
+     */
     public void press(int x, int y, MouseEvent e) {
 
         if(main.isPointIn(x, y)) {
+
+            LOGGER.info("Pressed on Main panel");
+
             if(!SwingUtilities.isLeftMouseButton(e)) return;
             String subMenuID = main.press(x, y);
 
             if(subMenuID != null) {
+                LOGGER.info("Called sub-menu is " + subMenuID);
+
                 ButtonPanel subMenu = additional.getOrDefault(subMenuID, null);
                 if(this.subMenu != null && this.subMenu != subMenu){
                     this.subMenu.drop();
@@ -153,15 +216,19 @@ public class UI{
 
         else if(subMenu != null) {
             if(subMenu.isPointIn(x, y)) {
+
+                LOGGER.info("Pressed on subMenu " + subMenuID);
+
                 String button = subMenu.press(x, y);
                 if(button == null) return;
+
+                LOGGER.info("Pressed button with name: " + button);
 
                 boolean pressed = subMenu.isButtonPressed(button);
                 try {
                     listeners.get(subMenuID).notify(button, pressed, e);
                 } catch (NullPointerException exception) {
-                    System.out.println("Can't find appropriate listener for \"" + subMenuID + "\"");
-//                    exception.printStackTrace();
+                    LOGGER.log(Level.WARNING, "Can't find appropriate listener for \"" + subMenuID + "\"", exception);
                 }
 
                 if(!SwingUtilities.isLeftMouseButton(e)) {
