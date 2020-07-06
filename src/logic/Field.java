@@ -2,6 +2,7 @@ package logic;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class Field implements Serializable {    //Класс поля, содержащий алгоритмы для поиска кратчайших путей
 
@@ -22,6 +23,8 @@ public class Field implements Serializable {    //Класс поля, соде�
     private transient int[][] minimalPathMap;     //Карта минимальных расстояний до всех клеток
     private transient SavesStep savesStep;          //Для сохранения предыдущих шагов
 
+    private static Logger logger = Logger.getLogger(Field.class.getName());
+
 
     public Field(int width, int height) {    //Конструктор поля
         this.width = width;
@@ -30,6 +33,7 @@ public class Field implements Serializable {    //Класс поля, соде�
         algIsWork = false;
         isAlgManyTargetIsWork = false;
         setRandomLandscape();
+        logger.info("Create field with random tiles");
     }
 
     public Field(int width, int height, TileType type) {    //Конструктор поля
@@ -41,6 +45,7 @@ public class Field implements Serializable {    //Класс поля, соде�
                 fieldTiles[i][j] = new Tile(i, j, type);
         algIsWork = false;
         isAlgManyTargetIsWork = false;
+        logger.info("Create field with specified tiles");
     }
 
     private Cell isContained(ArrayList<Cell> list, int x, int y) {  //Функция, возвращающая из списка клетку с переданными координатами
@@ -54,6 +59,7 @@ public class Field implements Serializable {    //Класс поля, соде�
     }
 
     public Cell getFinishCell(){
+
         return finishCell;
     }
 
@@ -61,20 +67,24 @@ public class Field implements Serializable {    //Класс поля, соде�
         this.startCell = startCell;
         this.fullPath = new ArrayList<>();
         this.path = new ArrayList<>();
+        logger.info("Set start cell");
     }
 
     public void setFinishCell(Cell finishCell) {  //Установить конечную вершину
         this.finishCell = finishCell;
         this.isAStar = true;
+        logger.info("Set finish cell");
     }
 
     public void setFinishCells(ArrayList<Cell> finishCells) {  //Установить множество конечных вершин
         this.finishCells = finishCells;
         this.isAStar = false;
+        logger.info("Set finish cell");
     }
 
 
     public boolean nextStep() throws CloneNotSupportedException {   //Следующий шаг алгоритма
+        logger.info("Next step of algorithm completed");
         if (finishCell == null)
             return false;
         if (isAStar)
@@ -89,6 +99,7 @@ public class Field implements Serializable {    //Класс поля, соде�
         while (nextStep()) {
 
         }
+        logger.info("Algorithm completed to the end");
     }
 
     public void clear() {                  //Очистить поле, прекрать алгоритм
@@ -100,6 +111,7 @@ public class Field implements Serializable {    //Класс поля, соде�
                 fieldTiles[i][j].isVisited = false;
             }
         }
+        logger.info("Field with open and visited cells is cleared");
     }
 
     private void setRandomLandscape() {   //Случайное создание поля
@@ -116,6 +128,7 @@ public class Field implements Serializable {    //Класс поля, соде�
             }
             System.out.println("\n");
         }
+        logger.info("Field printed");
     }
 
     public void printStatusCell() {      //Печать статуса клетки (посещена/непосещена, просмотрена/не просмотрена)
@@ -141,19 +154,22 @@ public class Field implements Serializable {    //Класс поля, соде�
             System.out.println("\n");
         }
         System.out.println("-------------------------------------------");
-
+        logger.info("Printed status cells of the field");
 
     }
 
     public ArrayList<Cell> getPath() {  //Функция, фозвращающая кратчайший путь
+        logger.info("Get minimal path");
         return path;
     }
 
     public ArrayList<Cell> getFullPath() {    //Функция, возвращающая кратчайший путь обхода всех сундуков
+        logger.info("Get minimal path of many target");
         return fullPath;
     }
 
     public void previousStep() {     //Предыдущий шаг алгоритма
+        logger.info("Previous step completed");
         try {
             fieldTiles = savesStep.getTile();
             currentCell = savesStep.getCeLL();
@@ -173,6 +189,7 @@ public class Field implements Serializable {    //Класс поля, соде�
             return false;
 
         if (!algIsWork) {           //Если алгоритм только запущен, то очищаются статусы клеток, создаются необходимые списки и словари
+            logger.info("Algorithm is started");
             for (int j = 0; j < height; j++)
                 for (int i = 0; i < width; i++) {
                     fieldTiles[j][i].isVisited = false;   //Объявляем все клетки непосещенными
@@ -199,6 +216,7 @@ public class Field implements Serializable {    //Класс поля, соде�
             }
             Collections.reverse(path);
             finishCell = null;
+            logger.info("Algorithm is finished");
         }
         return algIsWork;           //Возвращается статус работы алгоритма (закончился/ еще работает)
     }
@@ -422,6 +440,7 @@ public class Field implements Serializable {    //Класс поля, соде�
     public boolean nextStepFindPathManyTarget() throws CloneNotSupportedException {  //Следующий шаг поиска пути обхода всех вершин
 
         if (!isAlgManyTargetIsWork) {     //Если алгоритм запущен впервые
+            logger.info("Algorithm is started");
             fullPath.add(startCell);          //Добавляется начальная вершина
             this.finishCells = new ArrayList<>(finishCells);
             savesStep = new SavesStep();
@@ -429,6 +448,7 @@ public class Field implements Serializable {    //Класс поля, соде�
         }
 
         if (this.finishCells.isEmpty()) {          //Если все сундуки посещены, то алгоритм заканчивается
+            logger.info("Algorithm is finished");
             isAlgManyTargetIsWork = false;
             return false;
         }
@@ -464,6 +484,7 @@ public class Field implements Serializable {    //Класс поля, соде�
                 outputStream.writeObject(fieldTiles[j][i]);   //Сохраняется каждая клетка
 
         outputStream.close();
+        logger.info("Field saved");
     }
 
     public void load(String filename) throws IOException, ClassNotFoundException {      //Функция загрузки поля
@@ -477,9 +498,11 @@ public class Field implements Serializable {    //Класс поля, соде�
                 fieldCell[j][i] = (Tile) inputStream.readObject();  //Загрузка каждой клетки
         this.fieldTiles = fieldCell;
         inputStream.close();
+        logger.info("Field loaded");
     }
 
     public ArrayList<ArrayList<Cell>> findAllPath() throws CloneNotSupportedException {  //Нахождение всех кратчайших путей до сундука
+        logger.info("Started algorithm to find other minimal path");
         ArrayList<ArrayList<Cell>> allPaths = new ArrayList<>();  //Список всех путей
         ArrayList<Cell> currentPath = new ArrayList<>();   //Текущий путь
         currentPath.add(startCell);
@@ -489,6 +512,7 @@ public class Field implements Serializable {    //Класс поля, соде�
         for (int i = 0; i < aStarPath.size() - 1; i++)
             minimalPath += fieldTiles[aStarPath.get(i).getY()][aStarPath.get(i).getX()].getTileType().getTime(); //Ищется длина кратчайшего пути
         findAllPathRecursion(currentPath, allPaths, minimalPath, 0); //Запускается рекурсивный алгоритм
+        logger.info("Finished algorithm to find other minimal path");
         return allPaths;
     }
 
@@ -496,7 +520,9 @@ public class Field implements Serializable {    //Класс поля, соде�
         Cell currentCell = currentPath.get(currentPath.size() - 1);
         if (currentPathLength == minimalPathLength && currentCell.getX() == finishCell.getX() && currentCell.getY() == finishCell.getY()) {
             allPaths.add(new ArrayList<>(currentPath));  //Если найден еще один путь, то добавляется в список всех путей
-        } else if (currentPathLength < minimalPathLength) {  //Если длина текущего пути все еще меньше минимального
+            logger.info("Found other minimal path");
+        }
+        else if (currentPathLength < minimalPathLength) {  //Если длина текущего пути все еще меньше минимального
             if (currentCell.getX() - 1 >= 0 && (currentPath.size() == 1 || currentPath.get(currentPath.size() - 2).getX() != currentCell.getX() - 1)) { //Если клетка существует и не была посещена на предыдущем этапе
                 currentPath.add(new Cell(currentCell.getX() - 1, currentCell.getY()));     //Добавляется в текущий путь
                 currentPathLength += fieldTiles[currentCell.getY()][currentCell.getX()].getTileType().getTime();  //Пересчитывается путь, включая добавленную клетку

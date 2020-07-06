@@ -71,7 +71,7 @@ public class Main {
             System.out.println();
         }*/
 
-        //field.save("file.dat");
+        field.save("file.dat");
         field.load("file.dat");
         field.print();
 
