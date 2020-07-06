@@ -105,7 +105,7 @@ public class Field implements Serializable {    //Класс поля, соде�
     }
 
     public void run() throws CloneNotSupportedException {   //Прогнать алгоритм до конца
-        logger.info("Whole algorithm requested")
+        logger.info("Whole algorithm requested");
         while (nextStep()) {
         }
         logger.info("Algorithm completed to the end");
@@ -212,7 +212,7 @@ public class Field implements Serializable {    //Класс поля, соде�
 
         if (!algIsWork) {                    //Если алгоритм закончил работу, то собирается кратчайший путь
             path.add(currentCell);
-            while (currentCell.getX() != startCell.getX() || currentCell.getY() != startCell.getX()) {
+            while (currentCell.getX() != startCell.getX() || currentCell.getY() != startCell.getY()) {
                 currentCell = pathMap.get(currentCell);
                 path.add(currentCell);
             }
