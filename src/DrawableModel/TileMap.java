@@ -1,7 +1,7 @@
 package DrawableModel;
 
 import render.Drawable;
-import resources.ResourceManager;
+import rm.ResourceManager;
 
 import logic.Cell;
 import logic.Field;
@@ -12,7 +12,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Field class wrap, which converts data to drawable objects

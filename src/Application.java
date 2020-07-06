@@ -13,7 +13,7 @@ import DrawableModel.TileMap;
 import render.Canvas;
 import render.Drawable;
 
-import resources.ResourceManager;
+import rm.ResourceManager;
 
 import logic.TileType;
 
@@ -336,8 +336,9 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
 
 
     public static void main(String [] args) throws InterruptedException {
+
         initResources();
-        Application.LOGGER.setLevel(Level.INFO);
+        Application.LOGGER.setLevel(Level.SEVERE);
 
 
         // define and initiate window
