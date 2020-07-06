@@ -70,7 +70,9 @@ public class UI{
             additional.put("algorithm_menu", new AlgorithmPanel(0, height - AlgorithmPanel.height,
                     ImageIO.read(new File("assets/interface/play.png")),
                     ImageIO.read(new File("assets/interface/forward.png")),
-                    ImageIO.read(new File("assets/interface/back.png"))));
+                    ImageIO.read(new File("assets/interface/back.png")),
+                    ImageIO.read(new File("assets/interface/find_all.png")),
+                    ImageIO.read(new File("assets/interface/clear.png"))));
             LOGGER.info("Algorithm sub-menu is built");
 
         } catch (IOException e) {

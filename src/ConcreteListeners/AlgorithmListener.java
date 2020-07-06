@@ -53,6 +53,14 @@ public class AlgorithmListener implements Listener{
             // make step of algorithm
             target.stepForward();
         }
+
+        if(function.equals("all")) {
+            target.findAll();
+        }
+
+        if(function.equals("clear")) {
+            target.reset();
+        }
     }
 
     @Override
