@@ -3,6 +3,7 @@ package ConcreteDialogs;
 import DrawableModel.TileMap;
 
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
 
 public class OpenFileDialog extends FileDialog{
@@ -26,7 +27,7 @@ public class OpenFileDialog extends FileDialog{
         if(accepted) {
             if(target != null && chosen.getLine().length() > 0) {
                 try {
-                    target.load("saves/" + chosen.getLine() + ".pfsv");
+                    target.load("saves" + File.separator + chosen.getLine() + ".pfsv");
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                 } catch (ClassNotFoundException classNotFoundException) {
