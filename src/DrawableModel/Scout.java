@@ -6,8 +6,9 @@ import resources.ResourceManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
-public class Scout extends Cell implements Drawable {
+public class Scout extends Cell implements Drawable{
 
     BufferedImage texture;
     int tileSize;

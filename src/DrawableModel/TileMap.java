@@ -13,10 +13,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class TileMap extends Field implements Drawable{
-    transient int tileSize = 16; // tile size in pixels
+    transient private int tileSize = 16; // tile size in pixels
 
-    transient Scout scout;
-    transient ArrayList<Chest> chests;
+    transient private Scout scout;
+    transient private ArrayList<Chest> chests;
     transient DrawablePath drawablePath;
 
     transient boolean initialized = false; //equals true, when there is a scout and at least one chest
@@ -223,14 +223,15 @@ public class TileMap extends Field implements Drawable{
         g.setColor(oldColor);
     }
 
-    @Override
-    public void save(String filename) throws IOException {
-        ((Field) this).save(filename);
-    }
 
-//    @Override
-//    public void load(String filename) throws IOException, ClassNotFoundException {
-//
-//        return super.load(filename);
-//    }
+    @Override
+    public void load(String filename) throws IOException, ClassNotFoundException {
+        super.load(filename);
+
+        clear();
+        scout = null;
+        chests.clear();
+        drawablePath.clear();
+        init();
+    }
 }
