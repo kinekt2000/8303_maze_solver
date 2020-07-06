@@ -17,13 +17,13 @@ public class Main {
         field.print();
 
         Cell startCell = new Cell(0,0);
-        //logic.Cell finishCell = new logic.Cell(3,3);
-        /*ArrayList<logic.Cell> finishCells = new ArrayList<>();
+        /*//logic.Cell finishCell = new logic.Cell(3,3);
+        ArrayList<logic.Cell> finishCells = new ArrayList<>();
         finishCells.add(new logic.Cell(4, 0));
         finishCells.add(new logic.Cell(4, 4));
         finishCells.add(new logic.Cell(0, 4));
 
-        /*field.setStartCell(startCell);
+        field.setStartCell(startCell);
         field.setFinishCells(finishCells);
 
         for (int i=0; i<35; i++){
@@ -58,11 +58,11 @@ public class Main {
         }
 
         for (int i=0; i<5; i++){
-            field.previousStep();;
+            field.previousStep();
             field.printStatusCell();
         }
 
-        for (int i=0; i<10; i++){
+        for (int i=0; i<5; i++){
             field.nextStep();
             field.printStatusCell();
         }
@@ -71,7 +71,6 @@ public class Main {
             System.out.print(el.getX() + " " + el.getY() + " --> ");
         }
         System.out.println();
-
 
         /*ArrayList<ArrayList<logic.Cell>> allPath = field.findAllPath();
         for (ArrayList<logic.Cell> mas: allPath){
