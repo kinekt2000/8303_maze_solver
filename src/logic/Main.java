@@ -52,7 +52,16 @@ public class Main {
             field.printStatusCell();
         ArrayList<Cell> path = field.getPath();
 
-        System.out.println(" rer " + field.getFinishCell());
+        for (int i=0; i<5; i++){
+            field.nextStep();
+            field.printStatusCell();
+        }
+
+        for (int i=0; i<5; i++){
+            field.previousStep();
+            field.printStatusCell();
+        }
+
         for (int i=0; i<5; i++){
             field.nextStep();
             field.printStatusCell();

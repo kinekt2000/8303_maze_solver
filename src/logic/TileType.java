@@ -25,11 +25,11 @@ public enum TileType {      //Ландшафт плитки
         return name;
     }
 
-    public int getTime() {
+    int getTime() {
         return time;
     }
 
-    public void setTime(int time) {
+    void setTime(int time) {
         this.time = time;
     }
 

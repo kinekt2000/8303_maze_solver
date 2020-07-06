@@ -170,6 +170,8 @@ public class Field implements Serializable {    //Класс поля, соде�
     }
 
     public void previousStep() {     //Предыдущий шаг алгоритма
+        if ((finishCell==null && isAStar) || (finishCells==null && !isAStar))
+            return;
         logger.info("Previous step completed");
         try {
             fieldTiles = savesStep.getTile();
