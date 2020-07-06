@@ -506,11 +506,15 @@ public class Field implements Serializable {    //Класс поля, соде�
 
     public ArrayList<ArrayList<Cell>> findAllPath() throws CloneNotSupportedException {  //Нахождение всех кратчайших путей до сундука
         logger.info("Started algorithm to find other minimal path");
-      
+
+        Cell finishCell = getFinishCell();
+
         ArrayList<ArrayList<Cell>> allPaths = new ArrayList<>();  //Список всех путей
         ArrayList<Cell> currentPath = new ArrayList<>();   //Текущий путь
         currentPath.add(startCell);
         run();
+
+        this.finishCell = finishCell;
         ArrayList<Cell> aStarPath = getPath();
         int minimalPath = 0;
         for (int i = 0; i < aStarPath.size() - 1; i++)
