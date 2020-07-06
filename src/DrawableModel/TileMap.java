@@ -3,6 +3,7 @@ package DrawableModel;
 import render.Drawable;
 import resources.ResourceManager;
 
+import logic.Cell;
 import logic.Field;
 import logic.Tile;
 import logic.TileType;
@@ -11,6 +12,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Field class wrap, which converts data to drawable objects
@@ -83,6 +85,14 @@ public class TileMap extends Field implements Drawable{
                 fieldTiles[y][x] = new Tile(x, y, TileType.random());
             }
         }
+    }
+
+    /**
+     * turns TileMap into initial state, but saves scout and chests
+     */
+    public void reset() {
+        drawablePath.clear();
+        init();
     }
 
     /**
@@ -257,6 +267,19 @@ public class TileMap extends Field implements Drawable{
      */
     public void stepBack() {
         super.previousStep();
+    }
+
+    public void findAll() {
+        if(scout != null && chests.size() == 1) {
+            try {
+                ArrayList<ArrayList<Cell>> paths = findAllPath();
+                for(ArrayList<Cell> path: paths) {
+                    drawablePath.addPath(path);
+                }
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
