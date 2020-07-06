@@ -1,5 +1,7 @@
 package logic;
 
+import java.io.Serializable;
+
 public class Cell {     //Класс клетки, необходимой для работы алгоритма
     private final int x;
     private final int y;
