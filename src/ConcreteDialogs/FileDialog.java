@@ -12,6 +12,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -137,6 +139,8 @@ abstract class FileDialog implements Dialog {
     boolean accepted = false;
     boolean canceled = false;
 
+    protected File saveFolder;
+
     protected FileDialog() {
         files = new ArrayList<>();
 
@@ -158,7 +162,22 @@ abstract class FileDialog implements Dialog {
 
         // save files searching and building lines list
         try {
-            File savesFolder = new File("saves");
+            URL saves_path = getClass().getProtectionDomain().getCodeSource().getLocation();
+            File savesFolder = null;
+
+            try {
+                savesFolder = new File(saves_path.toURI());
+            } catch (URISyntaxException e) {
+                accepted = true;
+                close = true;
+                return;
+            }
+
+            if(savesFolder.getPath().contains(".jar")) {
+                savesFolder = savesFolder.getAbsoluteFile().getParentFile();
+            }
+
+            savesFolder = new File(savesFolder.getAbsolutePath() + File.separator + "saves");
 
             boolean fileExists = savesFolder.exists();
 
@@ -177,6 +196,9 @@ abstract class FileDialog implements Dialog {
                     System.out.println(exception.getMessage());
                 }
             }
+
+            System.out.println(savesFolder);
+            this.saveFolder = savesFolder;
 
             int i = 0;
             File [] saves = savesFolder.listFiles(extensionFilter);
@@ -210,7 +232,7 @@ abstract class FileDialog implements Dialog {
         // init exit buttons
         BufferedImage acceptTexture = null;
         try{
-            acceptTexture = ImageIO.read(new File("assets/interface/accept.png"));
+            acceptTexture = ImageIO.read(getClass().getResource("/assets/interface/accept.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -219,7 +241,7 @@ abstract class FileDialog implements Dialog {
 
         BufferedImage cancelTexture = null;
         try{
-            cancelTexture = ImageIO.read(new File("assets/interface/cancel.png"));
+            cancelTexture = ImageIO.read(getClass().getResource("/assets/interface/cancel.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

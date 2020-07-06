@@ -48,7 +48,7 @@ public class ResizeDialog implements Dialog{
 
         BufferedImage acceptTexture = null;
         try{
-            acceptTexture = ImageIO.read(new File("assets/interface/accept.png"));
+            acceptTexture = ImageIO.read(getClass().getResource("/assets/interface/accept.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -57,7 +57,7 @@ public class ResizeDialog implements Dialog{
 
         BufferedImage cancelTexture = null;
         try{
-            cancelTexture = ImageIO.read(new File("assets/interface/cancel.png"));
+            cancelTexture = ImageIO.read(getClass().getResource("/assets/interface/cancel.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

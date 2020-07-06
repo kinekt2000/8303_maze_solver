@@ -49,7 +49,7 @@ public class SaveFileDialog extends FileDialog{
         if(accepted) {
             if(target != null && chosen.getLine().length() > 0) {
                 try {
-                    target.save("saves" + File.separator + chosen.getLine() + ".pfsv");
+                    target.save(saveFolder.getAbsolutePath() + File.separator + chosen.getLine() + ".pfsv");
                     LOGGER.info("level saved into \"" + chosen.getLine() + ".pfsv\"");
                 } catch (IOException ioException) {
                     LOGGER.log(Level.WARNING, "can't access to \"" + chosen.getLine() + ".pfsv\"", ioException);

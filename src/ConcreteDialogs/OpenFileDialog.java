@@ -35,7 +35,7 @@ public class OpenFileDialog extends FileDialog{
         if(accepted) {
             if(target != null && chosen.getLine().length() > 0) {
                 try {
-                    target.load("saves" + File.separator + chosen.getLine() + ".pfsv");
+                    target.load(saveFolder.getAbsolutePath() + File.separator + chosen.getLine() + ".pfsv");
                     LOGGER.info("level \"" + chosen.getLine() + ".pfsv\" loaded");
                 } catch (IOException ioException) {
                     LOGGER.log(Level.WARNING, "can't open level \"" + chosen.getLine() + ".pfsv\"", ioException);
