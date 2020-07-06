@@ -1,4 +1,4 @@
-package resources;
+package rm;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -26,8 +26,8 @@ public class ResourceManager {
         return instance.table.getOrDefault(name, null);
     }
 
-    static public void loadTexture(String name, String path) {
-        if(name == null || path == null) {
+    static public void loadTexture(String name, String local_path) {
+        if(name == null || local_path == null) {
             return;
         }
 
@@ -37,7 +37,7 @@ public class ResourceManager {
 
         BufferedImage img;
         try {
-            img = ImageIO.read(new File(path));
+            img = ImageIO.read(ResourceManager.class.getResource(File.separator + local_path));
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -45,5 +45,4 @@ public class ResourceManager {
 
         instance.table.put(name, img);
     }
-
 }
