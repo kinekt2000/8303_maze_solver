@@ -16,12 +16,6 @@ public class Canvas {
 
     public Canvas() {
         camera = new Camera();
-
-        try {
-            img = ImageIO.read(new File("assets/gravel.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void draw(Graphics renderPlace, List<Drawable> objects) {
