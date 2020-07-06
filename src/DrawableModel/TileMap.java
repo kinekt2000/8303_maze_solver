@@ -271,6 +271,7 @@ public class TileMap extends Field implements Drawable{
 
     public void findAll() {
         if(scout != null && chests.size() == 1) {
+            init();
             try {
                 ArrayList<ArrayList<Cell>> paths = findAllPath();
                 for(ArrayList<Cell> path: paths) {

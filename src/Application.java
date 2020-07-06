@@ -275,7 +275,6 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
         TileType brush = landscapeListener.getBrush();
         if(brush != null) {
             map.setCell(mappedX, mappedY, brush);
-            System.out.println("set type of tile (" + mappedX + "; " + mappedY + ") in " + brush.toString());
         }
 
         if(SwingUtilities.isLeftMouseButton(e)) {
@@ -331,8 +330,8 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
         addMouseListener(this);
         addMouseMotionListener(this);
 
-        dialog = null;
         LOGGER.info("Dropped \"" + dialog.getName() + "\"");
+        dialog = null;
     }
 
 

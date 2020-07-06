@@ -44,6 +44,7 @@ public class DrawablePath implements Drawable {
             mappedPath = new BufferedImage(mapWidth * tileSize, mapHeight * tileSize, BufferedImage.TYPE_INT_ARGB);
 
         boolean empty = true;
+        pathLine = new GeneralPath();
         for(int i = 0; i < path.size(); i++){
             Cell cell = path.get(i);
 
@@ -104,6 +105,7 @@ public class DrawablePath implements Drawable {
         int b = randomizer.nextInt(256);
 
         Color color = new Color(r, g, b, 127);
+        System.out.println(color);
         addPath(path, color);
     }
 

@@ -28,6 +28,8 @@ public class ObjectsListener implements Listener {
      * @param y
      */
     public void setEntity(TileMap map, int x, int y) {
+        if(type == null) return;
+
         LOGGER.info("ObjectListener tries to set " + type.toString() + " on position (" + x + "; " + y + ")");
 
         if(type == EntityType.Scout) {
