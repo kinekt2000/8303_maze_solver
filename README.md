@@ -8,3 +8,8 @@ ETU 8303. Summer training practise, scout.
 Grishin K.  
 Zhurbin K.  
 Kurlin N.  
+
+---
+
+##### link to build  
+https://drive.google.com/drive/folders/1iCQLlTEN9N1xSARk43gAHejkjVudEfti?usp=sharing
