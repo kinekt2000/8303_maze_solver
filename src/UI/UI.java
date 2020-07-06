@@ -34,9 +34,6 @@ public class UI{
      */
     public UI(int width, int height) throws IOException {
 
-        URL url = getClass().getResource("/assets/interface/file.png");
-        System.out.println(url);
-
         this.width = width;
         this.height = height;
 

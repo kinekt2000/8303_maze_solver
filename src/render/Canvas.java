@@ -1,12 +1,9 @@
 package render;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class Canvas {
@@ -16,12 +13,6 @@ public class Canvas {
 
     public Canvas() {
         camera = new Camera();
-
-        try {
-            img = ImageIO.read(new File("assets/gravel.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void draw(Graphics renderPlace, List<Drawable> objects) {
