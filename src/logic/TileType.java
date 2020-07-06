@@ -1,3 +1,5 @@
+package logic;
+
 import java.util.Random;
 
 public enum TileType {      //Ландшафт плитки

@@ -1,3 +1,5 @@
+package logic;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,11 +17,11 @@ public class Main {
         field.print();
 
         Cell startCell = new Cell(0,0);
-        /*//Cell finishCell = new Cell(3,3);
-        ArrayList<Cell> finishCells = new ArrayList<>();
-        finishCells.add(new Cell(4, 0));
-        finishCells.add(new Cell(4, 4));
-        finishCells.add(new Cell(0, 4));
+        /*//logic.Cell finishCell = new logic.Cell(3,3);
+        ArrayList<logic.Cell> finishCells = new ArrayList<>();
+        finishCells.add(new logic.Cell(4, 0));
+        finishCells.add(new logic.Cell(4, 4));
+        finishCells.add(new logic.Cell(0, 4));
 
         field.setStartCell(startCell);
         field.setFinishCells(finishCells);
@@ -38,8 +40,8 @@ public class Main {
             field.printStatusCell();
         }
 
-        ArrayList<Cell> path = field.getFullPath();
-        for (Cell el: path){
+        ArrayList<logic.Cell> path = field.getFullPath();
+        for (logic.Cell el: path){
             System.out.print(el.getX() + " " + el.getY() + " --> ");
         }
         System.out.println();*/
@@ -50,6 +52,7 @@ public class Main {
             field.printStatusCell();
         ArrayList<Cell> path = field.getPath();
 
+        System.out.println(" rer " + field.getFinishCell());
         for (int i=0; i<5; i++){
             field.nextStep();
             field.printStatusCell();
@@ -60,9 +63,9 @@ public class Main {
         }
         System.out.println();
 
-        /*ArrayList<ArrayList<Cell>> allPath = field.findAllPath();
-        for (ArrayList<Cell> mas: allPath){
-            for (Cell el: mas){
+        /*ArrayList<ArrayList<logic.Cell>> allPath = field.findAllPath();
+        for (ArrayList<logic.Cell> mas: allPath){
+            for (logic.Cell el: mas){
                 System.out.print(el.getX() + " " + el.getY() + " --> ");
             }
             System.out.println();

@@ -1,3 +1,5 @@
+package logic;
+
 import java.io.Serializable;
 
 public class Tile implements Serializable, Cloneable {    //Класс плитки содержащей ландшафт

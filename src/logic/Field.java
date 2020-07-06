@@ -1,3 +1,5 @@
+package logic;
+
 import java.io.*;
 import java.util.*;
 
@@ -51,8 +53,14 @@ public class Field implements Serializable {    //Класс поля, соде�
         return null;
     }
 
+    public Cell getFinishCell(){
+        return finishCell;
+    }
+
     public void setStartCell(Cell startCell) {     //Установить начальную вершину
         this.startCell = startCell;
+        this.fullPath = new ArrayList<>();
+        this.path = new ArrayList<>();
     }
 
     public void setFinishCell(Cell finishCell) {  //Установить конечную вершину
@@ -67,6 +75,8 @@ public class Field implements Serializable {    //Класс поля, соде�
 
 
     public boolean nextStep() throws CloneNotSupportedException {   //Следующий шаг алгоритма
+        if (finishCell == null)
+            return false;
         if (isAStar)
             return nextStepFindPath();
         else
@@ -159,6 +169,9 @@ public class Field implements Serializable {    //Класс поля, соде�
     }
 
     public boolean nextStepFindPath() throws CloneNotSupportedException { //Следующий шаг поиска кратчайшего пути
+        if (finishCell == null)
+            return false;
+
         if (!algIsWork) {           //Если алгоритм только запущен, то очищаются статусы клеток, создаются необходимые списки и словари
             for (int j = 0; j < height; j++)
                 for (int i = 0; i < width; i++) {
@@ -179,26 +192,19 @@ public class Field implements Serializable {    //Класс поля, соде�
         savesStep.set(fieldTiles, currentCell, notVisitedCells);
 
         if (!algIsWork) {                    //Если алгоритм закончил работу, то собирается кратчайший путь
-            path = new ArrayList<>();
             path.add(currentCell);
             while (currentCell.getX() != startCell.getX() || currentCell.getY() != startCell.getX()) {
                 currentCell = pathMap.get(currentCell);
                 path.add(currentCell);
             }
             Collections.reverse(path);
+            finishCell = null;
         }
         return algIsWork;           //Возвращается статус работы алгоритма (закончился/ еще работает)
     }
 
     public boolean stepFindPath() { //Шаг поиска поиска кратчайшего пути от одной клетки к другой
-        System.out.println(finishCell);
         if (currentCell.getX() == finishCell.getX() && currentCell.getY() == finishCell.getY()) {   //Если найден путь то финальной клетки, то подача сигнала о завершении
-            //finishCell = null;
-            System.out.println(finishCell);
-            return false;
-        }
-
-        if (finishCell == null) {
             return false;
         }
 
@@ -416,7 +422,6 @@ public class Field implements Serializable {    //Класс поля, соде�
     public boolean nextStepFindPathManyTarget() throws CloneNotSupportedException {  //Следующий шаг поиска пути обхода всех вершин
 
         if (!isAlgManyTargetIsWork) {     //Если алгоритм запущен впервые
-            fullPath = new ArrayList<>();  //Создается список полного пути
             fullPath.add(startCell);          //Добавляется начальная вершина
             this.finishCells = new ArrayList<>(finishCells);
             savesStep = new SavesStep();

@@ -1,3 +1,5 @@
+package logic;
+
 public class Cell {     //Класс клетки, необходимой для работы алгоритма
     private final int x;
     private final int y;
