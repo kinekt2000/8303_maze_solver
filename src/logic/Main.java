@@ -72,13 +72,15 @@ public class Main {
         }
         System.out.println();
 
-        /*ArrayList<ArrayList<logic.Cell>> allPath = field.findAllPath();
+        field.setStartCell(startCell);
+        field.setFinishCell(new Cell(4,4));
+        ArrayList<ArrayList<logic.Cell>> allPath = field.findAllPath();
         for (ArrayList<logic.Cell> mas: allPath){
             for (logic.Cell el: mas){
                 System.out.print(el.getX() + " " + el.getY() + " --> ");
             }
             System.out.println();
-        }*/
+        }
 
         field.save("file.dat");
         field.load("file.dat");

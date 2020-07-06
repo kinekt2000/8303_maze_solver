@@ -510,7 +510,9 @@ public class Field implements Serializable {    //Класс поля, соде�
         ArrayList<ArrayList<Cell>> allPaths = new ArrayList<>();  //Список всех путей
         ArrayList<Cell> currentPath = new ArrayList<>();   //Текущий путь
         currentPath.add(startCell);
+        Cell bufFinishCell = new Cell(finishCell.getX(), finishCell.getY());
         run();
+        finishCell = bufFinishCell;
         ArrayList<Cell> aStarPath = getPath();
         int minimalPath = 0;
         for (int i = 0; i < aStarPath.size() - 1; i++)
