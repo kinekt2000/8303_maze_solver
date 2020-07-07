@@ -197,7 +197,6 @@ abstract class FileDialog implements Dialog {
                 }
             }
 
-            System.out.println(savesFolder);
             this.saveFolder = savesFolder;
 
             int i = 0;
