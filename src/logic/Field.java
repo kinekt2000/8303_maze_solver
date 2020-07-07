@@ -34,6 +34,7 @@ public class Field implements Serializable {    //Класс поля, соде�
         fieldTiles = new Tile[height][width];
         algIsWork = false;
         isAlgManyTargetIsWork = false;
+        isAStar = true;
         setRandomLandscape();
         logger.info("Create field with random tiles");
     }
@@ -46,6 +47,7 @@ public class Field implements Serializable {    //Класс поля, соде�
             for (int j=0; j<width; j++)
                 fieldTiles[i][j] = new Tile(i, j, type);
         algIsWork = false;
+        isAStar = true;
         isAlgManyTargetIsWork = false;
         logger.info("Create field with specified tiles");
     }
@@ -170,8 +172,15 @@ public class Field implements Serializable {    //Класс поля, соде�
     }
 
     public void previousStep() {     //Предыдущий шаг алгоритма
-        if ((finishCell==null && isAStar) || (finishCells.isEmpty() && !isAStar))
-            return;
+        if (isAStar){
+            if (finishCell == null)
+                return;
+        }
+        else {
+            if (finishCells.isEmpty())
+                return;
+        }
+
         logger.info("Previous step completed");
         try {
             fieldTiles = savesStep.getTile();
@@ -187,7 +196,7 @@ public class Field implements Serializable {    //Класс поля, соде�
         }
     }
 
-    public boolean nextStepFindPath() throws CloneNotSupportedException { //Следующий шаг поиска кратчайшего пути
+    private boolean nextStepFindPath() throws CloneNotSupportedException { //Следующий шаг поиска кратчайшего пути
         if (finishCell == null)
             return false;
 
@@ -225,7 +234,7 @@ public class Field implements Serializable {    //Класс поля, соде�
         return algIsWork;           //Возвращается статус работы алгоритма (закончился/ еще работает)
     }
 
-    public boolean stepFindPath() { //Шаг поиска поиска кратчайшего пути от одной клетки к другой
+    private boolean stepFindPath() { //Шаг поиска поиска кратчайшего пути от одной клетки к другой
         if (currentCell.getX() == finishCell.getX() && currentCell.getY() == finishCell.getY()) {   //Если найден путь то финальной клетки, то подача сигнала о завершении
             return false;
         }
