@@ -12,4 +12,5 @@ Kurlin N.
 ---
 
 ##### link to build  
+tested on linux system
 https://drive.google.com/drive/folders/1iCQLlTEN9N1xSARk43gAHejkjVudEfti?usp=sharing
