@@ -20,9 +20,8 @@ public class SaveFileDialog extends FileDialog{
 
     TileMap target;
 
-    /**
+    /*
      * calls save method for target
-     * @param target
      */
     public SaveFileDialog(TileMap target) {
         this.target = target;

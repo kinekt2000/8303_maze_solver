@@ -38,9 +38,8 @@ public class ResizeDialog implements Dialog{
 
     TileMap map;
 
-    /**
+    /*
      * calls resize method for target
-     * @param mapToResize
      */
     public ResizeDialog(TileMap mapToResize){
 

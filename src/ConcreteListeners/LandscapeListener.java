@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.util.logging.Logger;
 
-/**
+/*
  * Listener for landscape sub-menu
  * Has brush field which used by Application to change tiles
  * Can throw dialog, if right mouse button pressed
@@ -20,21 +20,18 @@ public class LandscapeListener implements UI.Listener{
     TileType brush;
     DialogRaiser raiser;
 
-    /**
+    /*
      * needs raiser (Application in this case) to ask user
      * about new value of tile overlap time
-     * @param raiser
+     * raiser is Application in this case
      */
     public LandscapeListener(DialogRaiser raiser) {
         this.raiser = raiser;
     }
 
-    /**
+    /*
      * If MouseEvent is Left Mouse Button, then set brush to appropriate value
      * Else raise Change Tile TYpe Dialog
-     * @param function
-     * @param activate
-     * @param e
      */
     @Override
     public void notify(String function, boolean activate, MouseEvent e) {
@@ -48,7 +45,7 @@ public class LandscapeListener implements UI.Listener{
         }
     }
 
-    /**
+    /*
      * Sets fields of Listener to default
      */
     @Override

@@ -8,7 +8,7 @@ import java.awt.event.MouseEvent;
 import java.util.logging.Logger;
 
 
-/**
+/*
  * Listener can set its Entity to Field, when Application asks
  */
 public class ObjectsListener implements Listener {
@@ -21,11 +21,8 @@ public class ObjectsListener implements Listener {
 
     private EntityType type =  null;
 
-    /**
+    /*
      * Set Entity of listener to map on position (x, y)
-     * @param map
-     * @param x
-     * @param y
      */
     public void setEntity(TileMap map, int x, int y) {
         if(type == null) return;
@@ -39,11 +36,8 @@ public class ObjectsListener implements Listener {
         }
     }
 
-    /**
+    /*
      * remove Entity of listener from map on position (x, y)
-     * @param map
-     * @param x
-     * @param y
      */
     public void removeEntity(TileMap map, int x, int y) {
         LOGGER.info("ObjectListener tries to remove " + type.toString() + " from position (" + x + "; " + y + ")");
@@ -54,11 +48,8 @@ public class ObjectsListener implements Listener {
         }
     }
 
-    /**
+    /*
      * sets Entity of listener using function
-     * @param function
-     * @param activate
-     * @param e
      */
     @Override
     public void notify(String function, boolean activate, MouseEvent e) {
@@ -76,7 +67,7 @@ public class ObjectsListener implements Listener {
     }
 
 
-    /**
+    /*
      * sets Entity to null
      */
     @Override

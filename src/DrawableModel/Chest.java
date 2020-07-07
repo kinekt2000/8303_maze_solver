@@ -6,7 +6,6 @@ import resources.ResourceManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.Serializable;
 
 public class Chest extends Cell implements Drawable {
 

@@ -4,6 +4,10 @@ import render.Drawable;
 
 import java.awt.*;
 
+/*
+ * Frame around tile on position (x, y)
+ * with size = tileSize
+ */
 public class TileHighlighter implements Drawable {
     private int x;
     private int y;

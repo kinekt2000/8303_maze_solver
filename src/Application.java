@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-/**
+/*
  * Application class
  * Catches system events and distributes then between modules.
  * Starts timer for update and rerender
@@ -358,7 +358,7 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
     }
 
 
-    /**
+    /*
      * Initializes all field used textures
      */
 

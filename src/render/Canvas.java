@@ -1,14 +1,14 @@
 package render;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
+/*
+ * Class draws Drawable objects with different transforms
+ */
 public class Canvas {
     private BufferedImage img;
 

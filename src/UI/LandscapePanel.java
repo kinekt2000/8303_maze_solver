@@ -3,6 +3,10 @@ package UI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+
+/*
+ * panel which works with cells of map
+ */
 class LandscapePanel extends ButtonPanel {
 
     final static public int width = 400;

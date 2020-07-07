@@ -38,9 +38,8 @@ public class ChangeTileTypeDialog implements Dialog {
 
     private int overcomeTime = 0;
 
-    /**
+    /*
      * gets control over TileType.typeName
-     * @param typeName TileType name to change
      */
     public ChangeTileTypeDialog(String typeName) {
         typeToChange = TileType.ID(typeName);
@@ -83,7 +82,7 @@ public class ChangeTileTypeDialog implements Dialog {
     }
 
 
-    /**
+    /*
      * set center of dialog into (x, y) point
      * @param x
      * @param y
@@ -129,7 +128,7 @@ public class ChangeTileTypeDialog implements Dialog {
         return name;
     }
 
-    /**
+    /*
      * returns true if accept button was pressed
      * @return
      */
@@ -138,7 +137,7 @@ public class ChangeTileTypeDialog implements Dialog {
         return accepted;
     }
 
-    /**
+    /*
      * returns true if cancel button was pressed
      * @return
      */
@@ -161,7 +160,7 @@ public class ChangeTileTypeDialog implements Dialog {
         cancel.draw(g);
     }
 
-    /**
+    /*
      * return true if accept or cancel were pressed.
      * What means that the dialog window should be closed
      * @return
@@ -171,7 +170,7 @@ public class ChangeTileTypeDialog implements Dialog {
         return close;
     }
 
-    /**
+    /*
      * catch keyTyped event, change string if user tap on input field
      * @param e
      */
@@ -193,7 +192,7 @@ public class ChangeTileTypeDialog implements Dialog {
         valueLine.setLine("time: " + overcomeTime);
     }
 
-    /**
+    /*
      * catch keyPressed event, change string if user tap on input field
      * used for BACK_SPACE catching
      * @param e
@@ -207,7 +206,7 @@ public class ChangeTileTypeDialog implements Dialog {
         valueLine.setLine("time: " + overcomeTime);
     }
 
-    /**
+    /*
      * change state of dialog after click on special places
      * @param e
      */

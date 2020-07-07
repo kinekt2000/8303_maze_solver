@@ -11,6 +11,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
+/*
+ * class which contains all menus.
+ * It calls listeners, when appropriate buttons are pressed
+ */
 public class UI{
 
     static Logger LOGGER = Logger.getLogger(UI.class.getName());
@@ -25,11 +30,8 @@ public class UI{
     String subMenuID;
     ButtonPanel subMenu;
 
-    /**
+    /*
      * Builds interface with button panels on right and bottom borders
-     * @param width         width of window, to calculate positions of UI
-     * @param height        height of window, to calculate positions of UI
-     * @throws IOException  thrown when there is no appropriate assets
      */
     public UI(int width, int height) throws IOException {
         this.width = width;
@@ -83,7 +85,7 @@ public class UI{
         LOGGER.info("UI initialized");
     }
 
-    /**
+    /*
      * Changes position of inner button panels
      * @param width     same as constructor
      * @param height    same as constructor
@@ -101,7 +103,7 @@ public class UI{
         }
     }
 
-    /**
+    /*
      * UI has several menus. There is a "landscape_menu", "file_menu",
      * "objects menu", "algorithm menu".
      * User should add Listener to sub-menu using id. Listener will be notified
@@ -114,7 +116,7 @@ public class UI{
         listeners.put(subMenuName, listener);
     }
 
-    /**
+    /*
      * update state of panels
      * @param ms    time from past state
      */
@@ -125,7 +127,7 @@ public class UI{
         }
     }
 
-    /**
+    /*
      * Draw UI on AWT Graphics
      * @param g UI will be drawn from 0,0 position
      */
@@ -165,7 +167,7 @@ public class UI{
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, old_antialias);
     }
 
-    /**
+    /*
      * You can check is point (x, y) in main panel or
      * on the sub-menu panel if there it is
      * @param x
@@ -181,7 +183,7 @@ public class UI{
     }
 
 
-    /**
+    /*
      * If (x, y) on main panel and some button pressed, then
      * there is sub-menu switch
      * If(x, y) on sub-menu panel and some button press, then

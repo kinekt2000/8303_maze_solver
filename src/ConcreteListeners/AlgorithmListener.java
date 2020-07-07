@@ -6,7 +6,7 @@ import UI.Listener;
 import java.awt.event.MouseEvent;
 import java.util.logging.Logger;
 
-/**
+/*
  * implements listener to be able to hear events
  * after appropriate button pressed in UI
  */
@@ -16,10 +16,8 @@ public class AlgorithmListener implements Listener{
 
     TileMap target;
 
-    /**
-     * need TileMap to call appropriate methods, when ui notifies Listsner
-     * @param map
-     * @throws NullPointerException
+    /*
+     * need TileMap to call appropriate methods, when ui notifies Listener
      */
     public AlgorithmListener(TileMap map) throws NullPointerException{
         if(map == null) {
@@ -28,12 +26,9 @@ public class AlgorithmListener implements Listener{
         this.target = map;
     }
 
-    /**
+    /*
      * Distribute functions to methods of target (TileMap)
      * UI calls this method
-     * @param function
-     * @param activate
-     * @param e
      */
     @Override
     public void notify(String function, boolean activate, MouseEvent e) {

@@ -42,7 +42,8 @@ abstract class FileDialog implements Dialog {
             y3 = (double)height / 3;
         }
 
-        void move(int dx, int dy) { // set center
+        // move center
+        void move(int dx, int dy) {
             x1 += dx;
             x2 += dx;
             x3 += dx;

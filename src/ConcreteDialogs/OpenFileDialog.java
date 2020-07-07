@@ -15,9 +15,8 @@ public class OpenFileDialog extends FileDialog{
 
     TileMap target;
 
-    /**
+    /*
      * Calls load method for target
-     * @param target
      */
     public OpenFileDialog(TileMap target) {
         this.target = target;

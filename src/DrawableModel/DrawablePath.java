@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Random;
 
-/**
+/*
  * Image with path line, which is superimposed on map
  */
 public class DrawablePath implements Drawable {
@@ -83,7 +83,6 @@ public class DrawablePath implements Drawable {
             }
         }
 
-//        mappedPath = new BufferedImage(mapWidth * tileSize, mapHeight * tileSize, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = (Graphics2D) mappedPath.getGraphics();
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
