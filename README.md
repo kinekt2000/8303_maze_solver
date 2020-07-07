@@ -28,7 +28,7 @@ java Application
 Для Windows:
 ```
 dir /s /B *.java > sources.txt
-javac -encode UTF-8 -d out @sources.txt
+javac -encoding UTF-8 -d out @sources.txt
 
 xcopy /e assets out\assets
 xcopy /e saves out\saves
