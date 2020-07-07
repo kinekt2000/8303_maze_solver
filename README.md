@@ -30,8 +30,8 @@ java Application
 dir /s /B *.java > sources.txt
 javac -encode UTF-8 -d out @sources.txt
 
-xcopy /y /o /e assets out\assets
-xcopy /y /o /e saves out\saves
+xcopy /e assets out\assets
+xcopy /e saves out\saves
 cd out
 
 java Application
