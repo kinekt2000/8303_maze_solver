@@ -19,19 +19,19 @@ Kurlin N.
 find -name "*.java" > sources
 javac -d out @sources
 
-cp assets out/assets
-cp saves out/saves
+cp -r assets out/assets
+cp -r saves out/saves
 cd out
 
 java Application
 ```
 Для Windows:
 ```
-dir \s \B *.java > sources.txt
-javac -d out @sources.txt
+dir /s /B *.java > sources.txt
+javac -encode UTF-8 -d out @sources.txt
 
-copy assets out\assets
-copy saves out\saves
+xcopy /y /o /e assets out\assets
+xcopy /y /o /e saves out\saves
 cd out
 
 java Application
