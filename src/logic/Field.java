@@ -95,7 +95,7 @@ public class Field implements Serializable {    //Класс поля, соде�
 
     public boolean nextStep() throws CloneNotSupportedException {   //Следующий шаг алгоритма
         logger.info("Next step of algorithm completed");
-        if (finishCell == null)
+        if (finishCell == null && isAStar)
             return false;
 
         if (isAStar)
@@ -170,7 +170,7 @@ public class Field implements Serializable {    //Класс поля, соде�
     }
 
     public void previousStep() {     //Предыдущий шаг алгоритма
-        if ((finishCell==null && isAStar) || (finishCells==null && !isAStar))
+        if ((finishCell==null && isAStar) || (finishCells.isEmpty() && !isAStar))
             return;
         logger.info("Previous step completed");
         try {
@@ -441,6 +441,11 @@ public class Field implements Serializable {    //Класс поля, соде�
     }
 
     public boolean nextStepFindPathManyTarget() throws CloneNotSupportedException {  //Следующий шаг поиска пути обхода всех вершин
+        if (this.finishCells.isEmpty()) {          //Если все сундуки посещены, то алгоритм заканчивается
+            logger.info("Algorithm is finished");
+            isAlgManyTargetIsWork = false;
+            return false;
+        }
 
         if (!isAlgManyTargetIsWork) {     //Если алгоритм запущен впервые
             logger.info("Algorithm is started");
@@ -448,12 +453,6 @@ public class Field implements Serializable {    //Класс поля, соде�
             this.finishCells = new ArrayList<>(finishCells);
             savesStep = new SavesStep();
             isAlgManyTargetIsWork = true;
-        }
-
-        if (this.finishCells.isEmpty()) {          //Если все сундуки посещены, то алгоритм заканчивается
-            logger.info("Algorithm is finished");
-            isAlgManyTargetIsWork = false;
-            return false;
         }
 
         this.startCell = fullPath.get(fullPath.size() - 1);
@@ -506,15 +505,13 @@ public class Field implements Serializable {    //Класс поля, соде�
 
     public ArrayList<ArrayList<Cell>> findAllPath() throws CloneNotSupportedException {  //Нахождение всех кратчайших путей до сундука
         logger.info("Started algorithm to find other minimal path");
-
-        Cell finishCell = getFinishCell();
-
+      
         ArrayList<ArrayList<Cell>> allPaths = new ArrayList<>();  //Список всех путей
         ArrayList<Cell> currentPath = new ArrayList<>();   //Текущий путь
         currentPath.add(startCell);
+        Cell bufFinishCell = new Cell(finishCell.getX(), finishCell.getY());
         run();
-
-        this.finishCell = finishCell;
+        finishCell = bufFinishCell;
         ArrayList<Cell> aStarPath = getPath();
         int minimalPath = 0;
         for (int i = 0; i < aStarPath.size() - 1; i++)

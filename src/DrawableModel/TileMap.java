@@ -76,8 +76,6 @@ public class TileMap extends Field implements Drawable{
         scout = null;
 
         drawablePath = new DrawablePath(width, height, tileSize);
-        clear();
-        init();
 
         fieldTiles = new Tile[height][width];
         for(int x = 0; x < width; x++) {
@@ -85,6 +83,9 @@ public class TileMap extends Field implements Drawable{
                 fieldTiles[y][x] = new Tile(x, y, TileType.random());
             }
         }
+
+        clear();
+        init();
     }
 
     /**
