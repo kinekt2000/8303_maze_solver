@@ -95,7 +95,7 @@ public class Field implements Serializable {    //Класс поля, соде�
 
     public boolean nextStep() throws CloneNotSupportedException {   //Следующий шаг алгоритма
         logger.info("Next step of algorithm completed");
-        if (finishCell == null)
+        if (finishCell == null && isAStar)
             return false;
 
         if (isAStar)
@@ -170,7 +170,7 @@ public class Field implements Serializable {    //Класс поля, соде�
     }
 
     public void previousStep() {     //Предыдущий шаг алгоритма
-        if ((finishCell==null && isAStar) || (finishCells==null && !isAStar))
+        if ((finishCell==null && isAStar) || (finishCells.isEmpty() && !isAStar))
             return;
         logger.info("Previous step completed");
         try {
