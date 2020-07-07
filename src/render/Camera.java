@@ -1,7 +1,8 @@
 package render;
 
-import java.awt.geom.AffineTransform;
-
+/*
+ * Canvas uses data in Camera to transform view
+ */
 public class Camera {
     final static private double defaultZoomFactor = 3;
 

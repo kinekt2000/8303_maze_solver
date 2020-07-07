@@ -2,6 +2,10 @@ package UI;
 
 import java.awt.*;
 
+
+/*
+ * label lines in interface elements
+ */
 public class Line {
     private int x;
     private int y;

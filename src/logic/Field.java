@@ -441,6 +441,11 @@ public class Field implements Serializable {    //Класс поля, соде�
     }
 
     public boolean nextStepFindPathManyTarget() throws CloneNotSupportedException {  //Следующий шаг поиска пути обхода всех вершин
+        if (this.finishCells.isEmpty()) {          //Если все сундуки посещены, то алгоритм заканчивается
+            logger.info("Algorithm is finished");
+            isAlgManyTargetIsWork = false;
+            return false;
+        }
 
         if (!isAlgManyTargetIsWork) {     //Если алгоритм запущен впервые
             logger.info("Algorithm is started");
@@ -448,12 +453,6 @@ public class Field implements Serializable {    //Класс поля, соде�
             this.finishCells = new ArrayList<>(finishCells);
             savesStep = new SavesStep();
             isAlgManyTargetIsWork = true;
-        }
-
-        if (this.finishCells.isEmpty()) {          //Если все сундуки посещены, то алгоритм заканчивается
-            logger.info("Algorithm is finished");
-            isAlgManyTargetIsWork = false;
-            return false;
         }
 
         this.startCell = fullPath.get(fullPath.size() - 1);

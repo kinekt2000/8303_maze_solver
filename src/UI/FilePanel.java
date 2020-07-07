@@ -3,6 +3,11 @@ package UI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+
+/*
+ * Button panel to work with map,
+ * as the whole object
+ */
 public class FilePanel extends ButtonPanel{
 
     final static public int width = 240;

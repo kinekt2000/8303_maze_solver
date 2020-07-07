@@ -8,14 +8,21 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SaveFileDialog extends FileDialog{
+
+    static Logger LOGGER = Logger.getLogger(SaveFileDialog.class.getName());
 
     int maxInputName = 10;
     boolean input = false;
 
     TileMap target;
 
+    /*
+     * calls save method for target
+     */
     public SaveFileDialog(TileMap target) {
         this.target = target;
     }
@@ -42,8 +49,9 @@ public class SaveFileDialog extends FileDialog{
             if(target != null && chosen.getLine().length() > 0) {
                 try {
                     target.save("saves" + File.separator + chosen.getLine() + ".pfsv");
+                    LOGGER.info("level saved into \"" + chosen.getLine() + ".pfsv\"");
                 } catch (IOException ioException) {
-                    ioException.printStackTrace();
+                    LOGGER.log(Level.WARNING, "can't access to \"" + chosen.getLine() + ".pfsv\"", ioException);
                 }
             }
         }

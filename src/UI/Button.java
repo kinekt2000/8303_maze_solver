@@ -3,6 +3,10 @@ package UI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+
+/*
+ * elementary unit of interface
+ */
 public class Button {
     final String id;
 

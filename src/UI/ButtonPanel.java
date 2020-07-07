@@ -4,6 +4,11 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/*
+ * Abstract container of buttons
+ * which should be specified by inheritors;
+ */
 abstract class ButtonPanel {
     protected List<Button> buttons;
 

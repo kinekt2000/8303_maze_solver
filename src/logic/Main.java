@@ -17,12 +17,22 @@ public class Main {
         field.print();
 
         Cell startCell = new Cell(0,0);
-        //logic.Cell finishCell = new logic.Cell(3,3);
+        /*//logic.Cell finishCell = new logic.Cell(3,3);
         ArrayList<logic.Cell> finishCells = new ArrayList<>();
         finishCells.add(new logic.Cell(4, 0));
         finishCells.add(new logic.Cell(4, 4));
         finishCells.add(new logic.Cell(0, 4));
 
+        field.setStartCell(startCell);
+        field.setFinishCells(finishCells);
+
+        for (int i=0; i<35; i++){
+            field.nextStep();
+            field.printStatusCell();
+        }
+
+        field.clear();
+        field.printStatusCell();
 
         field.setStartCell(startCell);
         field.setFinishCells(finishCells);
@@ -30,24 +40,17 @@ public class Main {
             field.printStatusCell();
         }
 
-        field.previousStep();
-        field.previousStep();
-        field.previousStep();
-        field.previousStep();
-        field.previousStep();
-        field.previousStep();
-
         ArrayList<logic.Cell> path = field.getFullPath();
         for (logic.Cell el: path){
             System.out.print(el.getX() + " " + el.getY() + " --> ");
         }
-        System.out.println();
+        System.out.println();*/
 
-        //field.setStartCell(startCell);
-        //field.setFinishCell(new Cell(4,4));
-        //while (field.nextStep())
-        //    field.printStatusCell();
-        /*ArrayList<Cell> path = field.getPath();
+        field.setStartCell(startCell);
+        field.setFinishCell(new Cell(4,4));
+        while (field.nextStep())
+            field.printStatusCell();
+        ArrayList<Cell> path = field.getPath();
 
         for (int i=0; i<5; i++){
             field.nextStep();
@@ -70,14 +73,14 @@ public class Main {
         System.out.println();
 
         field.setStartCell(startCell);
-       // field.setFinishCell(new Cell(4,4));
-        /*ArrayList<ArrayList<logic.Cell>> allPath = field.findAllPath();
+        field.setFinishCell(new Cell(4,4));
+        ArrayList<ArrayList<logic.Cell>> allPath = field.findAllPath();
         for (ArrayList<logic.Cell> mas: allPath){
             for (logic.Cell el: mas){
                 System.out.print(el.getX() + " " + el.getY() + " --> ");
             }
             System.out.println();
-        }*/
+        }
 
         field.save("file.dat");
         field.load("file.dat");

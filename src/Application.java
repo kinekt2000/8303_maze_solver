@@ -27,9 +27,22 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+
+/*
+ * Application class
+ * Catches system events and distributes then between modules.
+ * Starts timer for update and rerender
+ *
+ * Logs state into default logger
+ */
 
 public class Application extends JPanel implements MouseMotionListener, MouseListener, DialogRaiser {
+
+    static Logger LOGGER = Logger.getLogger(Application.class.getName());
+
 
     private int renderDelay = 30;
     private int logicDelay = 100;
@@ -38,15 +51,14 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
     private int oldMouseY = 0;
     private double scale = (double) java.awt.Toolkit.getDefaultToolkit().getScreenResolution() / 96;
 
-
     Timer renderTimer;
     Timer logicTimer;
 
     double time = System.currentTimeMillis();
 
-    BufferedImage background;
+    BufferedImage background;       // gradient image behind canvas
     render.Canvas canvas;
-    TileHighlighter highlighter;
+    TileHighlighter highlighter;    // frame around tile
 
     UI ui;
     Dialog dialog = null;
@@ -60,6 +72,8 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
     final int tileSize = 16;
 
     public Application() {
+        LOGGER.info("Application initiating");
+
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
 
@@ -68,10 +82,15 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
         addComponentListener(new ComponentListener() {
             @Override
             public void componentResized(ComponentEvent e) {
+                LOGGER.info("Application size set to " + getWidth() + "x" + getHeight());
+
                 ui.setSize(getWidth(), getHeight());
+                LOGGER.info("UI resized");
+
                 if(dialog != null) {
                     dialog.setPosition((getWidth() - dialog.getWidth())/2,
                             (getHeight() - dialog.getHeight())/2);
+                    LOGGER.info("Dialog \"" + dialog.getName() + "\" moved to center");
                 }
 
                 background = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -82,6 +101,7 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
                 g2d.setPaint(gradient);
                 g2d.fillRect(0, 0, background.getWidth(), background.getHeight());
                 g2d.dispose();
+                LOGGER.info("background image is repainted");
             }
 
             @Override
@@ -112,7 +132,10 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
             }
         });
 
+        LOGGER.info("Create main components of application");
         canvas = new Canvas();
+        LOGGER.info("Canvas is created");
+
         background = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = (Graphics2D) background.getGraphics();
         RadialGradientPaint gradient= new RadialGradientPaint(background.getWidth()/2, background.getHeight()/2,1,
@@ -120,8 +143,10 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
         g2d.setPaint(gradient);
         g2d.fillRect(0, 0, background.getWidth(), background.getHeight());
         g2d.dispose();
+        LOGGER.info("Background image is drawn");
 
         map = new TileMap(10, 10, 16);
+        LOGGER.info("Map is created");
 
         try {
             ui = new UI(1024, 1024);
@@ -129,11 +154,20 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
             e.printStackTrace();
             System.exit(1);
         }
+        LOGGER.info("UI is built");
 
+        LOGGER.info("Create UI listeners");
         fileListener = new FileListener(this, map);
+        LOGGER.info("File menu listener is created");
+
         landscapeListener = new LandscapeListener(this);
+        LOGGER.info("Landscape menu listener is created");
+
         objectsListener = new ObjectsListener();
+        LOGGER.info("Objects menu listener is created");
+
         algorithmListener = new AlgorithmListener(map);
+        LOGGER.info("Algorithm neu listener created");
 
         ui.addListener("file_menu", fileListener);
         ui.addListener("landscape_menu", landscapeListener);
@@ -142,6 +176,8 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
 
         renderTimer.start();
         logicTimer.start();
+
+        LOGGER.info("Application initiated");
     }
 
 
@@ -176,6 +212,8 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        LOGGER.fine("mouse dragged to position (" + e.getX() * scale + "; " + e.getY() * scale + ")");
+
         if(SwingUtilities.isLeftMouseButton(e)) {
             int newMouseX = (int) (e.getX() * scale);
             int newMouseY = (int) (e.getY() * scale);
@@ -192,6 +230,8 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        LOGGER.fine("mouse moved to position (" + e.getX() * scale + "; " + e.getY() * scale + ")");
+
         // get true coordinates of pixel field
         double x = e.getX() * scale / canvas.getCamera().getZoomFactor() - canvas.getCamera().getCameraOffsetX();
         double y = e.getY() * scale / canvas.getCamera().getZoomFactor() - canvas.getCamera().getCameraOffsetY();
@@ -214,10 +254,15 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        LOGGER.info("mouse clicked on position (" + e.getX() + "; " + e.getY() + ")");
+
         if(ui.isPointIn(e.getX(), e.getY())) {
+            LOGGER.info("click on UI");
             ui.press(e.getX(), e.getY(), e);
             return;
         }
+
+        LOGGER.info("click on canvas");
 
         double x = e.getX() * scale / canvas.getCamera().getZoomFactor() - canvas.getCamera().getCameraOffsetX();
         double y = e.getY() * scale / canvas.getCamera().getZoomFactor() - canvas.getCamera().getCameraOffsetY();
@@ -225,10 +270,11 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
         int mappedX = (int)(x/tileSize);
         int mappedY = (int)(y/tileSize);
 
+        LOGGER.info("point on field is (" + mappedX + "; " + mappedY + ")");
+
         TileType brush = landscapeListener.getBrush();
         if(brush != null) {
             map.setCell(mappedX, mappedY, brush);
-            System.out.println("set type of tile (" + mappedX + "; " + mappedY + ") in " + brush.toString());
         }
 
         if(SwingUtilities.isLeftMouseButton(e)) {
@@ -261,6 +307,10 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
 
     @Override
     public void raiseDialog(Dialog dialog) {
+        if(dialog == null) return;
+
+        LOGGER.info("Raised \"" + dialog.getName() + "\"");
+
         this.dialog = dialog;
 
         removeMouseListener(this);
@@ -280,12 +330,15 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
         addMouseListener(this);
         addMouseMotionListener(this);
 
+        LOGGER.info("Dropped \"" + dialog.getName() + "\"");
         dialog = null;
     }
 
 
     public static void main(String [] args) throws InterruptedException {
         initResources();
+        Application.LOGGER.setLevel(Level.INFO);
+
 
         // define and initiate window
         JFrame window = new JFrame();
@@ -304,6 +357,10 @@ public class Application extends JPanel implements MouseMotionListener, MouseLis
         window.setVisible(true);
     }
 
+
+    /*
+     * Initializes all field used textures
+     */
 
     private static void initResources() {
         // landscape

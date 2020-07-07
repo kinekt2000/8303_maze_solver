@@ -3,6 +3,11 @@ package UI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+
+/*
+ * Panel which works with entities on map,
+ * just like scout or chests
+ */
 class ObjectsPanel extends ButtonPanel{
 
     final static public int width = 160;

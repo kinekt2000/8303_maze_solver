@@ -3,6 +3,7 @@ package DrawableModel;
 import render.Drawable;
 import resources.ResourceManager;
 
+import logic.Cell;
 import logic.Field;
 import logic.Tile;
 import logic.TileType;
@@ -12,6 +13,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/*
+ * Field class wrap, which converts data to drawable objects
+ */
 public class TileMap extends Field implements Drawable{
     transient private int tileSize = 16; // tile size in pixels
 
@@ -21,6 +25,10 @@ public class TileMap extends Field implements Drawable{
 
     transient boolean initialized = false; //equals true, when there is a scout and at least one chest
 
+    /*
+     * Creates new Map with width and height and fills it with initial type.
+     * Size of tile should be defined as textures sizes
+     */
     public TileMap(int width, int height, int tileSize, TileType initialType) {
         super(width, height, initialType);
         chests = new ArrayList<>();
@@ -28,6 +36,10 @@ public class TileMap extends Field implements Drawable{
         drawablePath = new DrawablePath(width, height, tileSize);
     }
 
+    /*
+     * Creates new Map with width and height and fills it with random tiles.
+     * Size of tile should be defined as textures sizes
+     */
     public TileMap(int width, int height, int tileSize) {
         super(width, height);
         chests = new ArrayList<>();
@@ -43,6 +55,9 @@ public class TileMap extends Field implements Drawable{
         return height;
     }
 
+    /*
+     * clears Map, and sets size to width and height with random tiles
+     */
     public void resize(int width, int height) {
         this.width = width;
         this.height = height;
@@ -51,8 +66,6 @@ public class TileMap extends Field implements Drawable{
         scout = null;
 
         drawablePath = new DrawablePath(width, height, tileSize);
-        clear();
-        init();
 
         fieldTiles = new Tile[height][width];
         for(int x = 0; x < width; x++) {
@@ -60,8 +73,22 @@ public class TileMap extends Field implements Drawable{
                 fieldTiles[y][x] = new Tile(x, y, TileType.random());
             }
         }
+
+        clear();
+        init();
     }
 
+    /*
+     * turns TileMap into initial state, but saves scout and chests
+     */
+    public void reset() {
+        drawablePath.clear();
+        init();
+    }
+
+    /*
+     * Change tile on (x, y) to specified type
+     */
     public void setCell(int x, int y, TileType type) {
         try{
             fieldTiles[y][x] = new Tile(x, y, type);
@@ -72,6 +99,10 @@ public class TileMap extends Field implements Drawable{
         }
     }
 
+    /*
+     * Add scout on position (x, y)
+     * If it's already here, do nothing
+     */
     public void addScout(int x, int y) {
         if(x >= 0 && x < getWidth()
         && y >= 0 && y < getHeight()) {
@@ -94,6 +125,10 @@ public class TileMap extends Field implements Drawable{
         }
     }
 
+    /*
+     * removes scout from position (x, y)
+     * if there is no scout on this position, do nothing
+     */
     public void removeScout(int x, int y) {
         if(scout == null) return;
         if(scout.getX() == x && scout.getY() == y) {
@@ -102,6 +137,10 @@ public class TileMap extends Field implements Drawable{
         }
     }
 
+    /*
+     * adds chest on position (x, y)
+     * if there is a chest on this position, do nothing
+     */
     public void addChest(int x, int y) {
         if(x >= 0 && x < getWidth()
         && y >= 0 && y < getHeight()) {
@@ -124,6 +163,10 @@ public class TileMap extends Field implements Drawable{
         }
     }
 
+    /*
+     * removes chest from position (x, y)
+     * if there is no chest, do nothing
+     */
     public void removeChest(int x, int y) {
         for(Chest chest: chests) {
             if(chest.getX() == x && chest.getY() == y) {
@@ -134,6 +177,9 @@ public class TileMap extends Field implements Drawable{
         }
     }
 
+    /*
+     * initializate field, and algorithm
+     */
     private void init() {
         clear();
         drawablePath.clear();
@@ -150,6 +196,10 @@ public class TileMap extends Field implements Drawable{
         }
     }
 
+    /*
+     * finds path through chests if there is a scout
+     * and at least one chest
+     */
     @Override
     public void run() {
         if(initialized) {
@@ -170,12 +220,14 @@ public class TileMap extends Field implements Drawable{
     }
 
 
+    /*
+     * does step of algorithm if there is a scout
+     * and at least one chest
+     */
     public void stepForward() {
         if(initialized) {
             try {
-                if(!nextStep()) {
-                    clear();
-                }
+                nextStep();
 
                 if(chests.size() == 1) {
                     drawablePath.setPath(getPath());
@@ -190,8 +242,25 @@ public class TileMap extends Field implements Drawable{
         }
     }
 
+    /*
+     * rollback on one step
+     */
     public void stepBack() {
         super.previousStep();
+    }
+
+    public void findAll() {
+        if(scout != null && chests.size() == 1) {
+            init();
+            try {
+                ArrayList<ArrayList<Cell>> paths = findAllPath();
+                for(ArrayList<Cell> path: paths) {
+                    drawablePath.addPath(path);
+                }
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -224,6 +293,9 @@ public class TileMap extends Field implements Drawable{
     }
 
 
+    /*
+     * load map from file, than initiate all other fields
+     */
     @Override
     public void load(String filename) throws IOException, ClassNotFoundException {
         super.load(filename);

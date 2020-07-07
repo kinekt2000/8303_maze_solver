@@ -10,6 +10,9 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Random;
 
+/*
+ * Image with path line, which is superimposed on map
+ */
 public class DrawablePath implements Drawable {
 
     int mapWidth;
@@ -41,6 +44,7 @@ public class DrawablePath implements Drawable {
             mappedPath = new BufferedImage(mapWidth * tileSize, mapHeight * tileSize, BufferedImage.TYPE_INT_ARGB);
 
         boolean empty = true;
+        pathLine = new GeneralPath();
         for(int i = 0; i < path.size(); i++){
             Cell cell = path.get(i);
 
@@ -79,7 +83,6 @@ public class DrawablePath implements Drawable {
             }
         }
 
-//        mappedPath = new BufferedImage(mapWidth * tileSize, mapHeight * tileSize, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = (Graphics2D) mappedPath.getGraphics();
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -100,7 +103,7 @@ public class DrawablePath implements Drawable {
         int g = randomizer.nextInt(256);
         int b = randomizer.nextInt(256);
 
-        Color color = new Color(r, g, b, 127);
+        System.out.println(color);
         addPath(path, color);
     }
 
