@@ -36,4 +36,5 @@ public class Cell {     //Класс клетки, необходимой для
     public void setDistance(int distance) {
         this.distance = distance;
     }
+
 }

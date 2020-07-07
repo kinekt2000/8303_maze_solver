@@ -105,7 +105,6 @@ public class DrawablePath implements Drawable {
         int b = randomizer.nextInt(256);
 
         Color color = new Color(r, g, b, 127);
-        System.out.println(color);
         addPath(path, color);
     }
 

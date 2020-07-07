@@ -276,6 +276,7 @@ public class TileMap extends Field implements Drawable{
                 for(ArrayList<Cell> path: paths) {
                     drawablePath.addPath(path);
                 }
+                clear();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }
