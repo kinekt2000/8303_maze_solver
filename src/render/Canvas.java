@@ -16,6 +16,7 @@ public class Canvas {
 
     public Canvas() {
         camera = new Camera();
+
     }
 
     public void draw(Graphics renderPlace, List<Drawable> objects) {

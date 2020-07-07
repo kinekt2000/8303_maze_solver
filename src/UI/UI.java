@@ -6,7 +6,6 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -33,10 +32,6 @@ public class UI{
      * @throws IOException  thrown when there is no appropriate assets
      */
     public UI(int width, int height) throws IOException {
-
-        URL url = getClass().getResource("/assets/interface/file.png");
-        System.out.println(url);
-
         this.width = width;
         this.height = height;
 
@@ -47,37 +42,37 @@ public class UI{
         LOGGER.info("UI building");
         try {
             main = new MainPanel(width - MainPanel.width, 0,
-                    ImageIO.read(getClass().getResource("/assets/interface/file.png")),
-                    ImageIO.read(getClass().getResource("/assets/interface/brush.png")),
-                    ImageIO.read(getClass().getResource("/assets/interface/object.png")),
-                    ImageIO.read(getClass().getResource("/assets/interface/path.png")));
+                    ImageIO.read(new File("assets/interface/file.png")),
+                    ImageIO.read(new File("assets/interface/brush.png")),
+                    ImageIO.read(new File("assets/interface/object.png")),
+                    ImageIO.read(new File("assets/interface/path.png")));
             LOGGER.info("Main panel is built");
 
             additional.put("file_menu", new FilePanel(0, height - FilePanel.height,
-                    ImageIO.read(getClass().getResource("/assets/interface/resize.png")),
-                    ImageIO.read(getClass().getResource("/assets/interface/load.png")),
-                    ImageIO.read(getClass().getResource("/assets/interface/save.png"))));
+                    ImageIO.read(new File("assets/interface/resize.png")),
+                    ImageIO.read(new File("assets/interface/load.png")),
+                    ImageIO.read(new File("assets/interface/save.png"))));
             LOGGER.info("File sub-menu is built");
 
             additional.put("landscape_menu", new LandscapePanel(0, height - LandscapePanel.height,
-                    ImageIO.read(getClass().getResource("/assets/interface/grass.png")),
-                    ImageIO.read(getClass().getResource("/assets/interface/sand.png")),
-                    ImageIO.read(getClass().getResource("/assets/interface/gravel.png")),
-                    ImageIO.read(getClass().getResource("/assets/interface/snow.png")),
-                    ImageIO.read(getClass().getResource("/assets/interface/cobblestone.png"))));
+                    ImageIO.read(new File("assets/interface/grass.png")),
+                    ImageIO.read(new File("assets/interface/sand.png")),
+                    ImageIO.read(new File("assets/interface/gravel.png")),
+                    ImageIO.read(new File("assets/interface/snow.png")),
+                    ImageIO.read(new File("assets/interface/cobblestone.png"))));
             LOGGER.info("Landscape sub-menu is built");
 
             additional.put("objects_menu", new ObjectsPanel(0, height - ObjectsPanel.height,
-                    ImageIO.read(getClass().getResource("/assets/interface/chest.png")),
-                    ImageIO.read(getClass().getResource("/assets/interface/scout.png"))));
+                    ImageIO.read(new File("assets/interface/chest.png")),
+                    ImageIO.read(new File("assets/interface/scout.png"))));
             LOGGER.info("Objects sub-menu is built");
 
             additional.put("algorithm_menu", new AlgorithmPanel(0, height - AlgorithmPanel.height,
-                    ImageIO.read(getClass().getResource("/assets/interface/play.png")),
-                    ImageIO.read(getClass().getResource("/assets/interface/forward.png")),
-                    ImageIO.read(getClass().getResource("/assets/interface/back.png")),
-                    ImageIO.read(getClass().getResource("/assets/interface/find_all.png")),
-                    ImageIO.read(getClass().getResource("/assets/interface/clear.png"))));
+                    ImageIO.read(new File("assets/interface/play.png")),
+                    ImageIO.read(new File("assets/interface/forward.png")),
+                    ImageIO.read(new File("assets/interface/back.png")),
+                    ImageIO.read(new File("assets/interface/find_all.png")),
+                    ImageIO.read(new File("assets/interface/clear.png"))));
             LOGGER.info("Algorithm sub-menu is built");
 
         } catch (IOException e) {
