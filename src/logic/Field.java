@@ -82,6 +82,7 @@ public class Field implements Serializable {    //Класс поля, соде�
 
     public void setFinishCell(Cell finishCell) {  //Установить конечную вершину
         this.finishCell = finishCell;
+        this.finishCells = new ArrayList<>();
         this.isAStar = true;
         logger.info("Set finish cell");
     }
@@ -95,7 +96,7 @@ public class Field implements Serializable {    //Класс поля, соде�
 
     public boolean nextStep() throws CloneNotSupportedException {   //Следующий шаг алгоритма
         logger.info("Next step of algorithm completed");
-        if (finishCell == null && isAStar)
+        if ((finishCell == null && isAStar) || (finishCells.isEmpty() && !isAStar))
             return false;
 
         if (isAStar)
@@ -183,7 +184,7 @@ public class Field implements Serializable {    //Класс поля, соде�
                 fullPath = savesStep.getFullPath();
                 finishCells = savesStep.getFinishCells();
             }
-        } catch (IndexOutOfBoundsException ignored) {
+        } catch (IndexOutOfBoundsException | CloneNotSupportedException ignored) {
         }
     }
 
@@ -441,11 +442,6 @@ public class Field implements Serializable {    //Класс поля, соде�
     }
 
     public boolean nextStepFindPathManyTarget() throws CloneNotSupportedException {  //Следующий шаг поиска пути обхода всех вершин
-        if (this.finishCells.isEmpty()) {          //Если все сундуки посещены, то алгоритм заканчивается
-            logger.info("Algorithm is finished");
-            isAlgManyTargetIsWork = false;
-            return false;
-        }
 
         if (!isAlgManyTargetIsWork) {     //Если алгоритм запущен впервые
             logger.info("Algorithm is started");
@@ -453,6 +449,12 @@ public class Field implements Serializable {    //Класс поля, соде�
             this.finishCells = new ArrayList<>(finishCells);
             savesStep = new SavesStep();
             isAlgManyTargetIsWork = true;
+        }
+
+        if (this.finishCells.isEmpty()) {          //Если все сундуки посещены, то алгоритм заканчивается
+            logger.info("Algorithm is finished");
+            isAlgManyTargetIsWork = false;
+            return false;
         }
 
         this.startCell = fullPath.get(fullPath.size() - 1);
