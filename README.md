@@ -27,7 +27,7 @@ java Application
 ```
 Для Windows:
 ```
-dir src /s /B *.java > sources.txt
+dir /s /B src\*.java > sources.txt
 javac -encoding UTF-8 -d out @sources.txt
 
 xcopy /e assets out\assets
