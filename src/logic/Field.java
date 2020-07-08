@@ -34,7 +34,6 @@ public class Field implements Serializable {    //Класс поля, соде�
         fieldTiles = new Tile[height][width];
         algIsWork = false;
         isAlgManyTargetIsWork = false;
-        isAStar = true;
         setRandomLandscape();
         logger.info("Create field with random tiles");
     }
@@ -47,7 +46,6 @@ public class Field implements Serializable {    //Класс поля, соде�
             for (int j=0; j<width; j++)
                 fieldTiles[i][j] = new Tile(i, j, type);
         algIsWork = false;
-        isAStar = true;
         isAlgManyTargetIsWork = false;
         logger.info("Create field with specified tiles");
     }
@@ -84,6 +82,7 @@ public class Field implements Serializable {    //Класс поля, соде�
 
     public void setFinishCell(Cell finishCell) {  //Установить конечную вершину
         this.finishCell = finishCell;
+        this.finishCells = new ArrayList<>();
         this.isAStar = true;
         logger.info("Set finish cell");
     }
@@ -172,15 +171,8 @@ public class Field implements Serializable {    //Класс поля, соде�
     }
 
     public void previousStep() {     //Предыдущий шаг алгоритма
-        if (isAStar){
-            if (finishCell == null)
-                return;
-        }
-        else {
-            if (finishCells.isEmpty())
-                return;
-        }
-
+        if ((finishCell==null && isAStar) || (finishCells.isEmpty() && !isAStar))
+            return;
         logger.info("Previous step completed");
         try {
             fieldTiles = savesStep.getTile();
@@ -192,11 +184,11 @@ public class Field implements Serializable {    //Класс поля, соде�
                 fullPath = savesStep.getFullPath();
                 finishCells = savesStep.getFinishCells();
             }
-        } catch (IndexOutOfBoundsException ignored) {
+        } catch (IndexOutOfBoundsException | CloneNotSupportedException ignored) {
         }
     }
 
-    private boolean nextStepFindPath() throws CloneNotSupportedException { //Следующий шаг поиска кратчайшего пути
+    public boolean nextStepFindPath() throws CloneNotSupportedException { //Следующий шаг поиска кратчайшего пути
         if (finishCell == null)
             return false;
 
@@ -234,7 +226,7 @@ public class Field implements Serializable {    //Класс поля, соде�
         return algIsWork;           //Возвращается статус работы алгоритма (закончился/ еще работает)
     }
 
-    private boolean stepFindPath() { //Шаг поиска поиска кратчайшего пути от одной клетки к другой
+    public boolean stepFindPath() { //Шаг поиска поиска кратчайшего пути от одной клетки к другой
         if (currentCell.getX() == finishCell.getX() && currentCell.getY() == finishCell.getY()) {   //Если найден путь то финальной клетки, то подача сигнала о завершении
             return false;
         }
@@ -450,11 +442,6 @@ public class Field implements Serializable {    //Класс поля, соде�
     }
 
     public boolean nextStepFindPathManyTarget() throws CloneNotSupportedException {  //Следующий шаг поиска пути обхода всех вершин
-        if (this.finishCells.isEmpty()) {          //Если все сундуки посещены, то алгоритм заканчивается
-            logger.info("Algorithm is finished");
-            isAlgManyTargetIsWork = false;
-            return false;
-        }
 
         if (!isAlgManyTargetIsWork) {     //Если алгоритм запущен впервые
             logger.info("Algorithm is started");
@@ -462,6 +449,12 @@ public class Field implements Serializable {    //Класс поля, соде�
             this.finishCells = new ArrayList<>(finishCells);
             savesStep = new SavesStep();
             isAlgManyTargetIsWork = true;
+        }
+
+        if (this.finishCells.isEmpty()) {          //Если все сундуки посещены, то алгоритм заканчивается
+            logger.info("Algorithm is finished");
+            isAlgManyTargetIsWork = false;
+            return false;
         }
 
         this.startCell = fullPath.get(fullPath.size() - 1);

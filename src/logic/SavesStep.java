@@ -51,46 +51,54 @@ public class SavesStep { //Класс для сохранения предыду
 
     }
 
-    public Tile[][] getTile(){    //Получить поле предыдущего шага
+    public Tile[][] getTile() throws CloneNotSupportedException {    //Получить поле предыдущего шага
         Tile[][] field = savesFieldTiles.get(savesFieldTiles.size()-2);
+        Tile[][] retField = new Tile[field.length][field[0].length];
+        for (int i=0; i<field.length; i++)
+            for (int j=0; j<field[0].length; j++)
+                retField[i][j] = field[i][j].clone();
         savesFieldTiles.remove(savesFieldTiles.size()-1);
-        return field;
+        return retField;
     }
 
     public Cell getCeLL(){    //Получить текущую клетку предыдущего шага
         Cell cell = currentCell.get(currentCell.size()-2);
         currentCell.remove(currentCell.size()-1);
-        return cell;
+        return new Cell(cell.getX(), cell.getY());
     }
 
     public ArrayList<Cell> getNotVisitedCell(){  //Получить список непосещенных клеток предыдущего шага
         ArrayList<Cell> notVisitedCell = notVisitedCells.get(notVisitedCells.size()-2);
         notVisitedCells.remove(notVisitedCells.size()-1);
-        return notVisitedCell;
+        return new ArrayList<>(notVisitedCell);
     }
 
     public int[][] getMinimalPathMap(){  //Получить карту минимальных расстояний предыдущего шага
         int[][] pathMap = minimalPathMap.get(minimalPathMap.size()-2);
+        int[][] retPathMap = new int[pathMap.length][pathMap[0].length];
+        for (int i=0 ;i<pathMap.length; i++)
+            for (int j=0; j<pathMap[0].length; j++)
+                retPathMap[i][j] = pathMap[i][j];
         minimalPathMap.remove(minimalPathMap.size()-1);
-        return pathMap;
+        return retPathMap;
     }
 
     public ArrayList<Cell> getFinishCells(){  //Получить множество конечных точек предыдущего шага
         ArrayList<Cell> finishCell = finishCells.get(finishCells.size()-2);
         finishCells.remove(finishCells.size()-1);
-        return finishCell;
+        return new ArrayList<>(finishCell);
     }
 
     public ArrayList<Cell> getFullPath(){  //Получить путь обхода всех конечных клеток предыдущего шага
         ArrayList<Cell> path = fullPath.get(fullPath.size()-2);
         fullPath.remove(fullPath.size()-1);
-        return path;
+        return new ArrayList<>(path);
     }
 
     public  HashMap<Cell, Cell> getPathMap(){  //Получить пары путей предыдущего шага
         HashMap<Cell, Cell> path = pathMap.get(pathMap.size()-2);
         pathMap.remove(pathMap.size()-1);
-        return path;
+        return new HashMap<>(path);
     }
 
 
