@@ -9,6 +9,35 @@ Grishin K.
 Zhurbin K.  
 Kurlin N.  
 
+### Building instructions
+1. Скомпилировать программные модули  
+2. Расположить папки saves и assets в директорию, откуда будет запущена программа  
+3. Запустить программу. Точка входа - Application.class : main   
+
+Для linux:
+```
+find src -name "*.java" > sources
+javac -d out @sources
+
+cp -r assets out/assets
+cp -r saves out/saves
+cd out
+
+java Application
+```
+Для Windows:
+```
+dir src /s /B *.java > sources.txt
+javac -encoding UTF-8 -d out @sources.txt
+
+xcopy /e assets out\assets
+xcopy /e saves out\saves
+cd out
+
+java Application
+```
+Во время испольнения команды `xcopy` потребуется ввести ключ `D`  
+
 ---
 
 ##### link to build  
