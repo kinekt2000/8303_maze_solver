@@ -1,6 +1,10 @@
-package UI;
+package ConcreteDialogs;
 
+import UI.Button;
+import UI.Line;
 import UI.dialog.Dialog;
+import logic.TileType;
+import logic.TileTypeException;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -13,7 +17,7 @@ import java.io.IOException;
 public class ChangeTileTypeDialog implements Dialog {
 
     public final int width = 310;
-    public final int height = 120;
+    public final int height = 160;
     public final String name = "change_tile_type";
 
     private int x;
@@ -22,11 +26,11 @@ public class ChangeTileTypeDialog implements Dialog {
     Button accept;
     Button cancel;
 
-    Line labelLine;
+    Line[] labels = new Line[2];
     Line valueLine;
     boolean targeted = false;
 
-    tiles.TileType typeToChange;
+    TileType typeToChange;
 
     boolean close = false;
     boolean accepted = false;
@@ -34,10 +38,13 @@ public class ChangeTileTypeDialog implements Dialog {
 
     private int overcomeTime = 0;
 
+    /*
+     * gets control over TileType.typeName
+     */
     public ChangeTileTypeDialog(String typeName) {
-        typeToChange = tiles.TileType.ID(typeName);
+        typeToChange = TileType.ID(typeName);
         if(typeToChange == null) {
-            throw new tiles.TileTypeException("Wrong type cast in ChangeTileTypeDialog");
+            throw new TileTypeException("Wrong type cast in ConcreteDialogs.ChangeTileTypeDialog");
         } else {
             overcomeTime = typeToChange.getTime();
         }
@@ -60,15 +67,26 @@ public class ChangeTileTypeDialog implements Dialog {
 
         cancel = new Button("cancel", cancelTexture, width - 45, height - 15, 10);
 
-        labelLine = new Line(20, 10, 160, 30);
-        labelLine.setLine("Set new overcome time");
-        labelLine.setBackColor(new Color(43, 42, 42, 255));
-        labelLine.setFrontColor(Color.LIGHT_GRAY);
+        labels[0] = new Line(20, 10, 160, 30);
+        labels[0].setLine("Set new overcome time");
+        labels[0].setBackColor(new Color(43, 42, 42, 255));
+        labels[0].setFrontColor(Color.LIGHT_GRAY);
 
-        valueLine = new Line(75, 50, 160, 30);
+        labels[1] = new Line(17, 45, 160, 30);
+        labels[1].setLine("cannot be more than 20");
+        labels[1].setBackColor(new Color(43, 42, 42, 255));
+        labels[1].setFrontColor(Color.LIGHT_GRAY);
+
+        valueLine = new Line(75, 90, 160, 30);
         valueLine.setLine("time: " + overcomeTime);
     }
 
+
+    /*
+     * set center of dialog into (x, y) point
+     * @param x
+     * @param y
+     */
     @Override
     public void setPosition(int x, int y) {
         int dx = x - this.x;
@@ -76,7 +94,9 @@ public class ChangeTileTypeDialog implements Dialog {
 
         accept.move(dx, dy);
         cancel.move(dx, dy);
-        labelLine.move(dx, dy);
+        for(Line line: labels) {
+            line.move(dx, dy);
+        }
         valueLine.move(dx, dy);
 
         this.x = x;
@@ -108,11 +128,19 @@ public class ChangeTileTypeDialog implements Dialog {
         return name;
     }
 
+    /*
+     * returns true if accept button was pressed
+     * @return
+     */
     @Override
     public boolean isAccepted() {
         return accepted;
     }
 
+    /*
+     * returns true if cancel button was pressed
+     * @return
+     */
     @Override
     public boolean isCanceled() {
         return canceled;
@@ -123,18 +151,29 @@ public class ChangeTileTypeDialog implements Dialog {
         g.setColor(new Color(43, 42, 42, 255));
         g.fillRect(x, y, width, height);
 
-        labelLine.draw(g);
+        for(Line line: labels) {
+            line.draw(g);
+        }
         valueLine.draw(g);
 
         accept.draw(g);
         cancel.draw(g);
     }
 
+    /*
+     * return true if accept or cancel were pressed.
+     * What means that the dialog window should be closed
+     * @return
+     */
     @Override
     public boolean closed() {
         return close;
     }
 
+    /*
+     * catch keyTyped event, change string if user tap on input field
+     * @param e
+     */
     @Override
     public void keyTyped(KeyEvent e) {
         if(!targeted) return;
@@ -146,12 +185,18 @@ public class ChangeTileTypeDialog implements Dialog {
         int digit = Character.getNumericValue(c);
 
         int newTime = overcomeTime * 10 + digit;
-        if(newTime <= 20){
-            overcomeTime = newTime;
-            valueLine.setLine("time: " + overcomeTime);
-        }
+
+        if(newTime > 20) newTime = 20;
+
+        overcomeTime = newTime;
+        valueLine.setLine("time: " + overcomeTime);
     }
 
+    /*
+     * catch keyPressed event, change string if user tap on input field
+     * used for BACK_SPACE catching
+     * @param e
+     */
     @Override
     public void keyPressed(KeyEvent e) {
         if(!targeted) return;
@@ -161,6 +206,10 @@ public class ChangeTileTypeDialog implements Dialog {
         valueLine.setLine("time: " + overcomeTime);
     }
 
+    /*
+     * change state of dialog after click on special places
+     * @param e
+     */
     @Override
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();

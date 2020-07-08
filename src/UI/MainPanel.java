@@ -3,6 +3,10 @@ package UI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+
+/*
+ * panel which switches sub-menus
+ */
 class MainPanel extends ButtonPanel{
 
     final static public int width = 160;

@@ -1,6 +1,8 @@
-import UI.Button;
+package ConcreteDialogs;
+
 import UI.Line;
 import UI.dialog.Dialog;
+import DrawableModel.TileMap;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -9,8 +11,6 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class ResizeDialog implements Dialog{
 
@@ -36,7 +36,15 @@ public class ResizeDialog implements Dialog{
     boolean accepted = false;
     boolean canceled = false;
 
-    public ResizeDialog(){
+    TileMap map;
+
+    /*
+     * calls resize method for target
+     */
+    public ResizeDialog(TileMap mapToResize){
+
+        map = mapToResize;
+
         BufferedImage acceptTexture = null;
         try{
             acceptTexture = ImageIO.read(new File("assets/interface/accept.png"));
@@ -149,20 +157,22 @@ public class ResizeDialog implements Dialog{
 
         if(target == widthLine){
             int newMapWidth = mapWidth * 10 + digit;
-            if (newMapWidth <= 50) {
-                mapWidth = newMapWidth;
-                widthLine.setLine("width: " + mapWidth);
-            }
+
+            if(newMapWidth > 50) newMapWidth = 50;
+
+            mapWidth = newMapWidth;
+            widthLine.setLine("width: " + mapWidth);
 
             return;
         }
 
         if(target == heightLine) {
             int newMapHeight = mapHeight * 10 + digit;
-            if (newMapHeight <= 50) {
-                mapHeight = newMapHeight;
-                heightLine.setLine("height: " + mapHeight);
-            }
+
+            if(newMapHeight > 50) newMapHeight = 50;
+
+            mapHeight = newMapHeight;
+            heightLine.setLine("height: " + mapHeight);
 
             return;
         }
@@ -194,6 +204,10 @@ public class ResizeDialog implements Dialog{
         if(accept.isPointIn(x, y)) {
             accepted = true;
             close = true;
+            if(mapWidth >= 2 && mapHeight >= 2) {
+                System.out.println("try to resize");
+                map.resize(mapWidth, mapHeight);
+            }
             return;
         }
 
