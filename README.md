@@ -16,7 +16,7 @@ Kurlin N.
 
 Для linux:
 ```
-find -name "*.java" > sources
+find src -name "*.java" > sources
 javac -d out @sources
 
 cp -r assets out/assets
